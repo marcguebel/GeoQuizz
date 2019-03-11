@@ -102,16 +102,4 @@ class Controller{
 			return $response;
 		}	
 	}
-
-	/*public function test(Request $request, Response $response, array $args){
-		$partie = Partie::find($request->getHeader("X-geoquizz")[0])->first();
-		//var_dump($partie);
-		$serie = $partie->serie()->first();
-		//var_dump($serie);
-		$photos = $serie->photos()->get();
-		//var_dump($photos);
-		foreach ($photos as $photo){
-			//var_dump($photo);
-		}
-	}*/
 }
