@@ -1,0 +1,94 @@
+#
+# docker-compose file pour le déploiement initial de l'application lbs
+# Documentation complète : https://bitbucket.org/canals5/docker-things
+#
+# IMPORTANT :
+#   - ajouter les vhosts des services web dans le fichier /etc/hosts
+#     de la machine hôte :
+#   - api player : https://api.player.local:10443
+#                  http://api.player.local:10080
+#   - api backend : https://api.backend.local:11443
+#                   http://api.backend.local:11080
+#
+#
+# accès au service adminer : http://localhost:8080
+# accès au service mysql depuis le container :
+#     - utiliser le hostname "db"
+#     - database : geoquizz
+#     - user : geoquizz
+#     - password : geoquizz
+#
+# IMPORTANT : POUR UNE UTILISATION SUR LES MACHINES DU RESEAU IUT :
+# Décommenter la définition des variables http_proxy et https_proxy
+# 
+
+version: "3"
+
+networks:
+  lbs_network:
+    driver: bridge
+
+services:
+  api.player:
+    image: canals/php:latest
+    environment:
+      - VHOST_HOSTNAME=api.player.local
+      - VHOST_DOCROOT=/var/www/api
+      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+    ports:
+      - "10080:80"
+      - "10443:443"
+    volumes :
+      - ./player/api:/var/www/api
+      - ./player/src:/var/www/src
+    working_dir : /var/www/src
+    networks:
+      - lbs_network
+    links :
+      - mysql:db
+
+  api.backend:
+    image: canals/php:latest
+    environment:
+      - VHOST_HOSTNAME=api.backend.local
+      - VHOST_DOCROOT=/var/www/api
+      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+    ports:
+      - "11080:80"
+      - "11443:443"
+    volumes :
+      - ./backend/api:/var/www/api
+      - ./backend/src:/var/www/src
+    working_dir : /var/www/src
+    networks:
+      - lbs_network
+    links :
+      - mysql:db
+  
+#############################
+# mysql + adminer
+#############################
+  mysql:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=passwordRoot
+      - MYSQL_USER=geoquizz
+      - MYSQL_PASSWORD=geoquizz
+      - MYSQL_DATABASE=geoquizz
+    ports:
+      - "3603:3306"
+    networks:
+      - lbs_network
+    volumes :
+      - ./sql:/var/sql
+
+  adminer:
+     image: adminer
+     ports:
+       - "8080:8080"
+     networks:
+       - lbs_network
+     links:
+       - mysql:db
