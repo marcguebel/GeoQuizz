@@ -7,16 +7,7 @@ use \api\player\api\controller\Controller as Controller;
 $config = ['settings' => [
     'determineRouteBeforeAppMiddleware' => true,
     'displayErrorDetails' => true,
-    'addContentLengthHeader' => false,
-    /*'db' => [
-        'driver' => 'mysql',
-        'host' => 'db',
-        'database' => 'geoquizz',
-        'username' => 'geoquizz',
-        'password' => 'geoquizz',
-        'charset'   => 'utf8',
-        'collation' => 'utf8_general_ci'
-    ]*/
+    'addContentLengthHeader' => false
 ]];
 
 $app = new \Slim\App($config);
