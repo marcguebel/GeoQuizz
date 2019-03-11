@@ -5,10 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-CREATE DATABASE `geoquizz` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `geoquizz`;
-
-CREATE TABLE `distance` (
+CREATE TABLE `niveau` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `libelle` varchar(100) NOT NULL,
   `distance` int(11) NOT NULL,
@@ -17,13 +14,16 @@ CREATE TABLE `distance` (
 
 
 CREATE TABLE `partie` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `token` varchar(100) NOT NULL,
+  `id` varchar(64) NOT NULL,
   `status` int(1) NOT NULL,
-  `score` int(11) NOT NULL,
-  `serie` int(11) NOT NULL,
-  `joueur` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
+  `score` int(11) NOT NULL DEFAULT 0,
+  `joueur` varchar(100) DEFAULT NULL,
+  `idSerie` int(11) NOT NULL,
+  `idNiveau` int(11) NOT NULL,
+  KEY `idSerie` (`idSerie`),
+  KEY `idNiveau` (`idNiveau`),
+  CONSTRAINT `partie_ibfk_1` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
+  CONSTRAINT `partie_ibfk_2` FOREIGN KEY (`idNiveau`) REFERENCES `niveau` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -32,10 +32,7 @@ CREATE TABLE `photo` (
   `longitude` float NOT NULL,
   `latitude` float NOT NULL,
   `url` varchar(100) NOT NULL,
-  `idSerie` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idSerie` (`idSerie`),
-  CONSTRAINT `photo_ibfk_1` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -43,11 +40,20 @@ CREATE TABLE `serie` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ville` varchar(100) NOT NULL,
   `libelle` varchar(100) NOT NULL,
-  `idDistance` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `idDistance` (`idDistance`),
-  CONSTRAINT `serie_ibfk_1` FOREIGN KEY (`idDistance`) REFERENCES `distance` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `serie_photo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `idSerie` int(11) NOT NULL,
+  `idPhoto` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idSerie` (`idSerie`),
+  KEY `idPhoto` (`idPhoto`),
+  CONSTRAINT `serie_photo_ibfk_1` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
+  CONSTRAINT `serie_photo_ibfk_2` FOREIGN KEY (`idPhoto`) REFERENCES `photo` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 CREATE TABLE `user` (
@@ -58,4 +64,4 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2019-03-11 09:50:28
+-- 2019-03-11 16:44:07
