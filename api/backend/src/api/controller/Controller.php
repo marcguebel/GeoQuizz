@@ -15,25 +15,27 @@ class Controller{
 		$this->container = $container;
 	}
 
-	/*public function score(Request $request, Response $response, array $args){
+	public function newPhoto(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
-			$partie = Partie::find($request->getHeader("X-geoquizz")[0])->first();
-			$partie->status = Partie::$finished;
-			$partie->score = $body->score;
-			$partie->save();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);	
+			$photo = new Photo();
+			$photo->longitude = $body->longitude;
+			$photo->latitude = $body->latitude;
+			$photo->url = $body->url;
+			$photo->save();
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
+			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
 		catch(\Exception $e){
 			$data = [
 				"type" => "Error",
 				"error" => "404",
-				"message" => "Problème lors de l'envoi du score"
+				"message" => "Problème lors de la création de la photo"
 			];
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
 			$response->getBody()->write(json_encode($data));
 			return $response;	
 		}
-	}*/
+	}
 }

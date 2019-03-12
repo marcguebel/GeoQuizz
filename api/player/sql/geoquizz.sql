@@ -5,6 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+DROP TABLE IF EXISTS `niveau`;
 CREATE TABLE `niveau` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `libelle` varchar(100) NOT NULL,
@@ -13,6 +14,7 @@ CREATE TABLE `niveau` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `partie`;
 CREATE TABLE `partie` (
   `id` varchar(64) NOT NULL,
   `status` int(1) NOT NULL,
@@ -27,6 +29,7 @@ CREATE TABLE `partie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `photo`;
 CREATE TABLE `photo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `longitude` float NOT NULL,
@@ -36,6 +39,7 @@ CREATE TABLE `photo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `serie`;
 CREATE TABLE `serie` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ville` varchar(100) NOT NULL,
@@ -44,6 +48,7 @@ CREATE TABLE `serie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `serie_photo`;
 CREATE TABLE `serie_photo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idSerie` int(11) NOT NULL,
@@ -56,6 +61,7 @@ CREATE TABLE `serie_photo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `login` varchar(100) NOT NULL,
@@ -64,4 +70,5 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2019-03-11 16:44:07
+-- 2019-03-12 08:15:41
+

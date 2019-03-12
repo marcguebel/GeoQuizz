@@ -16,7 +16,7 @@ $c = $app->getContainer();
 
 $container["notFoundHandler"] = function ($c) {
     return function ($request, $response) use ($c) {
-        throw new Exception("Api Not Found", 404);
+        throw new Exception("Ressource Not Found", 404);
     };
 };
 
@@ -31,9 +31,9 @@ $db->addConnection(parse_ini_file("conf/conf.ini"));
 $db->setAsGlobal();
 $db->bootEloquent();
 
-/*$app->post('/game/new[/]', function (Request $request, Response $response, array $args) {
+$app->post('/photos[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
-    return $controller->newGame($request, $response, $args);
-});*/
+    return $controller->newPhoto($request, $response, $args);
+});
 
 $app->run();

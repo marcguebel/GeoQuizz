@@ -25,7 +25,7 @@
 version: "3"
 
 networks:
-  lbs_network:
+  geoquizz_network:
     driver: bridge
 
 services:
@@ -44,7 +44,7 @@ services:
       - ./player/src:/var/www/src
     working_dir : /var/www/src
     networks:
-      - lbs_network
+      - geoquizz_network
     links :
       - mysql:db
 
@@ -63,7 +63,7 @@ services:
       - ./backend/src:/var/www/src
     working_dir : /var/www/src
     networks:
-      - lbs_network
+      - geoquizz_network
     links :
       - mysql:db
   
@@ -80,7 +80,7 @@ services:
     ports:
       - "3603:3306"
     networks:
-      - lbs_network
+      - geoquizz_network
     volumes :
       - ./sql:/var/sql
 
@@ -89,6 +89,6 @@ services:
      ports:
        - "8080:8080"
      networks:
-       - lbs_network
+       - geoquizz_network
      links:
        - mysql:db
