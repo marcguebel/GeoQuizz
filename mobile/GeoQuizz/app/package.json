@@ -4,5 +4,9 @@
   },
   "main": "main",
   "name": "geoquizz",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "nativescript-camera": "^4.2.0"
+  }
 }
