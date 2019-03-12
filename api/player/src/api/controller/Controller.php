@@ -5,13 +5,17 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \api\player\api\model\Partie as Partie;
 use \api\player\api\model\Serie as Serie;
 use \api\player\api\model\Photo as Photo;
-use \api\player\api\model\Niveau as Niveau;
 use \api\player\api\middleware\Token as Token;
 
 class Controller{
 	private $container;
 	public function __construct(\Slim\Container $container){
 		$this->container = $container;
+	}
+
+	public function doc(Request $request, Response $response, array $args){
+		$response->getBody()->write(file_get_contents("docAPI.txt"));
+		return $response;
 	}
 
 	public function newGame(Request $request, Response $response, array $args){
@@ -23,12 +27,16 @@ class Controller{
 			$partie->idSerie = $body->serie;
 			$partie->joueur = $body->joueur;
 			$partie->save();
-			$data["partie"] = $partie;			
-
-			$niveau = Niveau::find($body->niveau)->first();
-			$data["niveau"] = ["libelle" => $niveau->libelle, "distance" => $niveau->distance];
+			$data["partie"] = $partie;
 
 			$serie = $partie->serie()->first();
+			$data["partie"]["distance"] = $serie->distance;
+			$data["partie"]["points"] = [
+				"D" => explode(";", $serie->points)[0],
+				"2D" => explode(";", $serie->points)[1],
+				"3D" => explode(";", $serie->points)[2]
+			];
+
 			$photos = $serie->photos()->get();
 			$data["photos"] = [];		
 			foreach ($photos as $photo){
@@ -59,9 +67,9 @@ class Controller{
 	public function score(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
-			$partie = Partie::find($request->getHeader("X-geoquizz")[0])->first();
+			$partie = Partie::find($args["id"]);
 			$partie->status = Partie::$finished;
-			$partie->score = $body->score;
+			$partie->score = $body->score;			
 			$partie->save();
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);	
 			return $response;
@@ -82,7 +90,7 @@ class Controller{
 		try{
 			$parties = Partie::select(["joueur", "score"])
 				->where("status", "=", Partie::$finished)
-				->where("idSerie", "=", $args["id"])
+				->where("idSerie", "=", $args["serie"])
 				->where("idNiveau", "=", $args["niveau"])
 				->orderBy("score", "desc")
 				->get();
@@ -95,7 +103,7 @@ class Controller{
 			$data = [
 				"type" => "Error",
 				"error" => "404",
-				"message" => "Ressource introuvable /game/leaderboard/".$args["id"]
+				"message" => "Ressource introuvable /game/leaderboard/"
 			];
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
 			$response->getBody()->write(json_encode($data));

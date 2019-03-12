@@ -1,0 +1,93 @@
+Documentation API Backend
+
+========================
+GET: /photos[/]
+
+Description: Récupère toutes les photos
+
+Retourne:
+{
+  	"photos": [{
+	   	"id": ...,
+	    "longitude": ...,
+	    "latitude": ...,
+	    "url": ...
+	},
+	{
+	    "id": ...,
+	    "longitude": ...,
+	    "latitude": ...,
+	    "url": ...
+	}]
+}
+========================
+GET: /photo/{id}[/]
+
+Description: Récupère la photo par rapport à l'id
+
+Retourne:
+{
+  	"photo": {
+	   	"id": ...,
+	    "longitude": ...,
+	    "latitude": ...,
+	    "url": ...
+	}
+}
+========================
+POST: /photos[/]
+
+Description: Enregistre la photo
+
+Body:
+{
+	"longitude": ...,
+	"latitude": ...,
+	"url": ...
+}
+
+Rien n'est renvoyer
+========================
+PUT: /photos/{id}[/]
+
+Description: Enregistre les nouvelles infos de la photo
+
+Body: 
+{
+	"longitude": ...,
+	"latitude": ...,
+	"url": ...
+}
+
+Rien n'est renvoyer
+========================
+GET: /series[/]
+
+Description: Récupère toutes les séries
+
+Retourne:
+{
+  	"series": [{
+	   	"id": ...,
+	    "ville": ...,
+	    "libelle": ...
+	},
+	{
+	    "id": ...,
+	    "ville": ...,
+	    "libelle": ...
+	}]
+}
+========================
+GET: /serie/{id}[/]
+
+Description: Récupère la serie par rapport à l'id
+
+Retourne:
+{
+  	"serie": {
+	   	"id": ...,
+	    "ville": ...,
+	    "libelle": ...
+	}
+}

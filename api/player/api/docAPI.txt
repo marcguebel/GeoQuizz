@@ -1,0 +1,72 @@
+Documentation API Player
+
+========================
+POST: /game/new[/]
+
+Description: Créer une partie
+
+Body: 
+{
+	"serie": ...,
+	"joueur": ...
+}
+
+	serie: id de la série qui sera utilisée lors de la partie
+	joueur: nom du joueur, qui apparaîtra dans le tableau des scores
+
+Retourne: 
+{
+	"partie": {
+		"id": ...,
+	    "status": 0,
+	    "idSerie": ...,
+	    "joueur": ...,
+	    "distance": ...,
+	    "points": [
+	    	"D": ...,
+	    	"2D": ...,
+	    	"3D": ...
+	    ]
+	},
+	"photos": [
+		{
+		    "id": ...,
+		    "longitude": ...,
+		    "latitude": ...,
+		    "url": ...
+		}, 
+		{
+		    "id": ...,
+		    "longitude": ...,
+		    "latitude": ...,
+		    "url": ...
+		},
+		...
+	]
+}
+========================
+PUT: /game/score/{id}[/]
+
+Description: Enregistrer le score de la partie
+
+Body: 
+{
+	"score": ...	
+}
+
+Rien n'est renvoyé
+========================
+GET: /game/leaderboard/{serie}[/]
+
+Description: Récupére les scores en fonction de la série
+
+Retourne:
+{
+  "score": [{
+    "joueur": ...,
+    "score": ...
+  }, {
+    "joueur": ...,
+    "score": ...
+  }]
+}

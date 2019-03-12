@@ -36,19 +36,19 @@ $app->post('/game/new[/]', function (Request $request, Response $response, array
     return $controller->newGame($request, $response, $args);
 });
 
-$app->put('/game/score[/]', function (Request $request, Response $response, array $args) {
+$app->put('/game/score/{id}[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->score($request, $response, $args);
 });
 
-$app->get('/game/leaderboard/{id}/{niveau}[/]', function (Request $request, Response $response, array $args) {
+$app->get('/game/leaderboard/{serie}/{niveau}[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->leaderboard($request, $response, $args);
 });
 
-/*$app->get('/game/test[/]', function (Request $request, Response $response, array $args) {
+$app->get('/doc[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
-    return $controller->test($request, $response, $args);
-});*/
+    return $controller->doc($request, $response, $args);
+});
 
 $app->run();
