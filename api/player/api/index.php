@@ -46,6 +46,11 @@ $app->get('/game/leaderboard/{serie}[/]', function (Request $request, Response $
     return $controller->leaderboard($request, $response, $args);
 });
 
+$app->get('/series[/]', function (Request $request, Response $response, array $args) {
+    $controller = new Controller($this);
+    return $controller->series($request, $response, $args);
+});
+
 $app->get('/doc[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->doc($request, $response, $args);

@@ -21,7 +21,7 @@ Retourne:
 	}]
 }
 ========================
-GET: /photo/{id}[/]
+GET: /photos/{id}[/]
 
 Description: Récupère la photo
 
@@ -98,10 +98,10 @@ Retourne:
 		"latitude": ...,
 		"longitude": ...,
 		"zoom": ...
-	},]
+	}]
 }
 ========================
-GET: /serie/{id}[/]
+GET: /series/{id}[/]
 
 Description: Récupère la série
 

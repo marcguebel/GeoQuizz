@@ -81,3 +81,23 @@ Retourne:
     "score": ...
   }]
 }
+========================
+GET: /series[/]
+
+Description: Récupère toutes les séries
+
+Retourne:
+{
+  	"series": [{
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...
+	},
+	{
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...
+	}]
+}

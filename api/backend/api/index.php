@@ -76,6 +76,16 @@ $app->delete('/series/{serie}/remove/{photo}[/]', function (Request $request, Re
     return $controller->removePhotoSerie($request, $response, $args);
 });
 
+$app->post('/register[/]', function (Request $request, Response $response, array $args) {
+    $controller = new Controller($this);
+    return $controller->register($request, $response, $args);
+});
+
+$app->post('/login[/]', function (Request $request, Response $response, array $args) {
+    $controller = new Controller($this);
+    return $controller->login($request, $response, $args);
+});
+
 $app->get('/doc[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->doc($request, $response, $args);

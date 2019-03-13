@@ -5,7 +5,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \api\player\api\model\Partie as Partie;
 use \api\player\api\model\Serie as Serie;
 use \api\player\api\model\Photo as Photo;
-use \api\player\api\middleware\Token as Token;
+use \api\player\api\utils\Token as Token;
 
 class Controller{
 	private $container;
@@ -92,6 +92,7 @@ class Controller{
 				->where("status", "=", Partie::$finished)
 				->where("idSerie", "=", $args["serie"])
 				->orderBy("score", "desc")
+				->take(10)
 				->get();
 			$data["score"] = $parties;	
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
@@ -108,5 +109,25 @@ class Controller{
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}	
+	}
+
+	public function series(Request $request, Response $response, array $args){
+		try{
+			$series = Serie::select(["id", "ville", "libelle", "distance"])->get();
+			$data["series"] = $series;
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+			$response->getBody()->write(json_encode($data));
+			return $response;
+		}
+		catch(\Exception $e){
+			$data = [
+				"type" => "Error",
+				"error" => "404",
+				"message" => "Ressource introuvable"
+			];
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
+			$response->getBody()->write(json_encode($data));
+			return $response;	
+		}
 	}
 }

@@ -55,6 +55,7 @@ services:
       - VHOST_DOCROOT=/var/www/api
       #- http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
       #- https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      - secretJWT=GeoQuizzAtelier2
     ports:
       - "11080:80"
       - "11443:443"

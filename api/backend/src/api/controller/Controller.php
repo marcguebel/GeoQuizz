@@ -6,7 +6,9 @@ use \api\backend\api\model\Serie as Serie;
 use \api\backend\api\model\Photo as Photo;
 use \api\backend\api\model\Serie_photo as Serie_photo;
 use \api\backend\api\model\User as User;
-use \api\backend\api\middleware\Token as Token;
+use \api\backend\api\utiks\TokenJWT as TokenJWT;
+use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
 class Controller{
 	private $container;
@@ -234,5 +236,63 @@ class Controller{
 			$response->getBody()->write(json_encode($data));
 			return $response;	
 		}
+	}
+
+	public function register(Request $request, Response $response, array $args){
+		try{
+			$body = json_decode($request->getBody());
+			$test_doublon = User::where("login", "=", $body->login)->first();
+			if($test_doublon == null){
+				$user = new User();
+				$user->id = Uuid::uuid4();
+				$user->login = $body->login;
+				$user->password = password_hash($body->password, PASSWORD_DEFAULT);
+				$user->save();
+				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
+			}
+			else{
+				$data = [
+					"type" => "Error",
+					"error" => "400",
+					"message" => "Doublon"
+				];
+				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(400);
+				$response->getBody()->write(json_encode($data));
+			}
+			return $response;
+		}
+		catch(\Exception $e){
+			$data = [
+				"type" => "Error",
+				"error" => "400",
+				"message" => "Erreur lors de l'inscription"
+			];
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
+			$response->getBody()->write(json_encode($data));
+			return $response;	
+		}
+	}
+
+	public function login(Request $request, Response $response, array $args){
+		$body = json_decode($request->getBody());
+		$user = User::where("login", "=", $body->login)->first();
+		if($user != null && password_verify($body->password, $user->password)){
+			$tokenJWT = TokenJWT::new($user->id);
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')
+				->withHeader('Authorization', 'Bearer '.$tokenJWT)
+				->withStatus(204);
+			$_SESSION["user"] = $user;
+			unset($_SESSION["user"]->password);
+		}
+		else{
+			$data = [
+				"type" => "Error",
+				"error" => "401",
+				"message" => "Login ou mot de passe erroné"
+			];
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(401);
+			$response->getBody()->write(json_encode($data));
+		}
+		return $response;
 	}
 }

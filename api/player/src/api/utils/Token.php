@@ -1,5 +1,5 @@
 <?php
-namespace api\player\api\middleware;
+namespace api\player\api\utils;
 class Token{
 	public static function new(){
 		$bin = random_bytes(32);
