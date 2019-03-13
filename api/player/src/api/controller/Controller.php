@@ -30,8 +30,8 @@ class Controller{
 			$data["partie"] = $partie;
 
 			$serie = $partie->serie()->first();
-			$data["partie"]["distance"] = $serie->distance;
-			$data["partie"]["points"] = [
+			$data["serie"] = $serie;
+			$data["serie"]["points"] = [
 				"D" => explode(";", $serie->points)[0],
 				"2D" => explode(";", $serie->points)[1],
 				"3D" => explode(";", $serie->points)[2]
@@ -91,7 +91,6 @@ class Controller{
 			$parties = Partie::select(["joueur", "score"])
 				->where("status", "=", Partie::$finished)
 				->where("idSerie", "=", $args["serie"])
-				->where("idNiveau", "=", $args["niveau"])
 				->orderBy("score", "desc")
 				->get();
 			$data["score"] = $parties;	

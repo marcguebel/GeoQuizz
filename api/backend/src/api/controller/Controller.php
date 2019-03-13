@@ -6,7 +6,6 @@ use \api\backend\api\model\Serie as Serie;
 use \api\backend\api\model\Photo as Photo;
 use \api\backend\api\model\Serie_photo as Serie_photo;
 use \api\backend\api\model\User as User;
-use \api\backend\api\model\Niveau as Niveau;
 use \api\backend\api\middleware\Token as Token;
 
 class Controller{
@@ -110,6 +109,13 @@ class Controller{
 		try{
 			$series = Serie::all();
 			$data["series"] = $series;
+			foreach ($data["series"] as $serie){
+				$serie->points = [
+					"D" => explode(";", $serie->points)[0],
+					"2D" => explode(";", $serie->points)[1],
+					"3D" => explode(";", $serie->points)[2]
+				];
+			}
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -130,6 +136,11 @@ class Controller{
 		try{
 			$serie = Serie::find($args["id"]);
 			$data["serie"] = $serie;
+			$data["serie"]["points"] = [
+				"D" => explode(";", $serie->points)[0],
+				"2D" => explode(";", $serie->points)[1],
+				"3D" => explode(";", $serie->points)[2]
+			];
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -154,6 +165,9 @@ class Controller{
 			$serie->libelle = $body->libelle;
 			$serie->distance = $body->distance;
 			$serie->points = $body->points;
+			$serie->latitude = $body->latitude;
+			$serie->longitude = $body->longitude;
+			$serie->zoom = $body->zoom;
 			$serie->save();
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
 			return $response;
@@ -172,11 +186,23 @@ class Controller{
 
 	public function addPhotoSerie(Request $request, Response $response, array $args){
 		try{
-			$serie_photo = new Serie_photo();
-			$serie_photo->idSerie = $args["serie"];
-			$serie_photo->idPhoto = $args["photo"];
-			$serie_photo->save();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
+			$test_doublon = Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first();
+			if($test_doublon == null){
+				$serie_photo = new Serie_photo();
+				$serie_photo->idSerie = $args["serie"];
+				$serie_photo->idPhoto = $args["photo"];
+				$serie_photo->save();
+				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
+			}
+			else{
+				$data = [
+					"type" => "Error",
+					"error" => "400",
+					"message" => "Doublon"
+				];
+				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(400);
+				$response->getBody()->write(json_encode($data));
+			}
 			return $response;
 		}
 		catch(\Exception $e){

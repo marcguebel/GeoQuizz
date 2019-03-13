@@ -41,7 +41,7 @@ $app->put('/game/score/{id}[/]', function (Request $request, Response $response,
     return $controller->score($request, $response, $args);
 });
 
-$app->get('/game/leaderboard/{serie}/{niveau}[/]', function (Request $request, Response $response, array $args) {
+$app->get('/game/leaderboard/{serie}[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->leaderboard($request, $response, $args);
 });

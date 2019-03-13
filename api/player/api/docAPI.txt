@@ -19,26 +19,33 @@ Retourne:
 	"partie": {
 		"id": ...,
 	    "status": 0,
-	    "idSerie": ...,
-	    "joueur": ...,
-	    "distance": ...,
-	    "points": [
-	    	"D": ...,
-	    	"2D": ...,
-	    	"3D": ...
-	    ]
+	    "joueur": ...
+	},
+	"serie": {
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...,
+		"points": [
+			"D": ...,
+			"2D" ...,
+			"3D": ...
+		],
+		"latitude": ...,
+		"longitude": ...,
+		"zoom": ...
 	},
 	"photos": [
 		{
 		    "id": ...,
-		    "longitude": ...,
 		    "latitude": ...,
+			"longitude": ...,
 		    "url": ...
 		}, 
 		{
 		    "id": ...,
-		    "longitude": ...,
 		    "latitude": ...,
+			"longitude": ...,
 		    "url": ...
 		},
 		...
@@ -48,6 +55,8 @@ Retourne:
 PUT: /game/score/{id}[/]
 
 Description: Enregistrer le score de la partie
+
+id: id de la partie
 
 Body: 
 {
@@ -59,6 +68,8 @@ Rien n'est renvoyé
 GET: /game/leaderboard/{serie}[/]
 
 Description: Récupére les scores en fonction de la série
+
+serie: id de la série
 
 Retourne:
 {

@@ -66,12 +66,12 @@ $app->put('/series/{id}[/]', function (Request $request, Response $response, arr
     return $controller->updateSerie($request, $response, $args);
 });
 
-$app->post('/series/{serie}/{photo}[/]', function (Request $request, Response $response, array $args) {
+$app->post('/series/{serie}/add/{photo}[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->addPhotoSerie($request, $response, $args);
 });
 
-$app->delete('/series/{serie}/{photo}[/]', function (Request $request, Response $response, array $args) {
+$app->delete('/series/{serie}/remove/{photo}[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->removePhotoSerie($request, $response, $args);
 });
