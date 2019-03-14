@@ -3,14 +3,17 @@
       <h1>Bonne chance {{pseudo}}</h1>
       <div id="game">
         <div id="image">
-          <img src="../../../../ressources/photos/place_stan.jpg">
+          <img id="lImage" src="https://i.imgur.com/HBbbnGu.jpg">
         </div>
-        <div id="maps">
+        <!--<div id="maps">
           
+        </div>-->
+        <div id="resultat">
+          <h3 id="res"></h3>
         </div>
         <div id="detail">
           <h2 id="bas_gauche">Score : {{score}}</h2>
-          <input id="valider" type="button" name="validation" value="valider" @click="validation(lastLat)" />
+          <button id="valider" @click="validation()">Valider</button>      
           <h2 id="bas_droite">Photo : {{nbrePhoto}} / 10</h2>
         </div>
       </div>
@@ -24,25 +27,109 @@ export default {
     return {
       pseudo: '',
       score: 0,
+      serie: false,
       nbrePhoto: 1,
-      lastLat: 0,
+      lastlatlng:false,
+      lastLat: false,
       lastLng: false,
+      series: false,
     }
   },
   mounted(){
-    this.pseudo = this.$route.params.pseudo ;
-    this.createMap();
+    if(this.$route.params.pseudo === undefined){
+      this.$router.push('/');
+    }
+    else{
+      this.pseudo = this.$route.params.pseudo ;
+      this.serie = this.$route.params.idSerie;
+      this.theSeries();
+    }   
   },
   methods:{
-    validation(lat){
-      console.log(lat);
-      if(this.nbrePhoto + 1 <= 10){
-        this.nbrePhoto++;
-        console.log(this.Distance(this.lastLat,this.lastLng,48.6939,6.18291));
+     getRandomInt(max) {
+      return Math.floor(Math.random() * Math.floor(max));
+    },
+    theSeries(){
+      window.axios.post('https://player-lmaillard.pagekite.me/game/new',{
+          serie: this.serie,
+          joueur: this.pseudo
+        }).then(response => {
+          //console.log(response.data);
+          let tab = [response.data["photos"],response.data["partie"],response.data["serie"]];
+          this.$store.commit('setSeries',tab);
+           this.createMap();
+           this.createGame();
+           this.createImage();
+        }).catch(error => {
+          console.log(error);
+        });
+    },
+    createGame(){
+      let tab = [];
+      while(tab.length != 10){
+        let nbre = this.getRandomInt(this.$store.state.series[0].length);
+
+        if(tab.indexOf(nbre) >= 0 ){
+        }
+        else{
+          tab.push(nbre);
+        }
+      }
+      this.$store.commit('setGame',tab);
+
+    },
+    validation(){
+
+      if(this.nbrePhoto < 10){
+        let result = this.Distance(this.lastlatlng.lastLat,this.lastlatlng.lastLng,this.$store.state.series[0][this.$store.state.game[this.nbrePhoto - 1]].latitude,this.$store.state.series[0][this.$store.state.game[this.nbrePhoto - 1]].longitude);
+        result = (Math.round(result *1000)/1000) * 1000;
+        
+        $("#res").html("vous êtes à " + result + " mètres");
+
+        if(this.$store.state.series[2]["distance"] > result){
+          this.score += 5;
+        }
+        else if(this.$store.state.series[2]["distance"]  * 2 > result){
+          this.score += 3;
+        }
+        else if(this.$store.state.series[2]["distance"]  * 3 > result){
+          this.score += 1;
+        }
+        document.getElementById("game").removeChild(document.getElementById('maps'));        
+        this.createMap();
+        this.createImage();
+      }
+      this.nbrePhoto++;
+
+      if($("#valider").html() == "Acces leaderboard"){
+        this.$router.push("/game/"+ this.$store.state.series[2].id + "/" + this.score + "/" + this.pseudo);
+      }
+
+      if(this.nbrePhoto == 11){
+        this.nbrePhoto--;
+        $("#valider").html("Acces leaderboard");
+        this.$store.commit('setScore',this.score);
+        window.axios.put('https://player-lmaillard.pagekite.me/game/score/' + this.$store.state.series[1].id,{
+          score: this.score,
+        }).then(response => {
+          console.log(response.data);
+        }).catch(error => {
+          console.log(error);
+        });
       }
     },
+    createImage(){
+      $("#lImage").attr('src',this.$store.state.series[0][this.$store.state.game[this.nbrePhoto - 1]].url);
+    },
     createMap(){
-      var map = L.map('maps').setView([48.681, 6.1789], 12); // LIGNE 14
+
+      let newMaps = document.createElement('div');
+      newMaps.id = "maps";
+      let detail = document.getElementById("resultat");
+      var parentDiv = document.getElementById("game");
+      parentDiv.insertBefore(newMaps, detail);
+
+      var map = L.map('maps').setView([this.$store.state.series[2]["latitude"], this.$store.state.series[2]["longitude"]], this.$store.state.series[2]["zoom"]); // LIGNE 14
 
         var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { // LIGNE 16
             attribution: '© OpenStreetMap contributors',
@@ -53,25 +140,25 @@ export default {
     
         map.addLayer(osmLayer);
 
-        map.on('click', function(e){
+        this.lastlatlng = map.on('click', function(e){
 
           this.lastLat = e.latlng.lat;
           this.lastLng = e.latlng.lng;
-          // Creating a marker
-          
+
+            // Creating a marker
+            
           marker.setLatLng(e.latlng);
-           
-          // Adding marker to the map
+             
+            // Adding marker to the map
           marker.addTo(map);
 
-          console.log(game.$data.lastLat);
+          return e.latlng;
         });
     },
     convertRad(input){
       return (Math.PI * input)/180;
     },
     Distance(lat_a_degre, lon_a_degre, lat_b_degre, lon_b_degre){
-      console.log(lat_a_degre);
       let R = 6378137 //Rayon de la terre en mètre
  
       let lat_a = this.convertRad(lat_a_degre);
@@ -96,8 +183,28 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .accessory:after {
+    position: absolute;
+    top:  50%;
+    left: 50%;
+    display:block;
+    background-color: hsl(0, 0%, 75%);
+    height: 12px;
+    width:  12px;
+    transform: rotate(45deg);
+    margin-top:  -10px;
+    margin-left: -10px;
+    border-radius: 4px 0;
+    border: 4px solid hsla(0, 0%, 100%, 0.35);
+    background-clip: padding-box;
+    box-shadow: -10px 10px 0 hsla(0, 0%, 100%, 0.15), 10px -10px 0 hsla(0, 0%, 100%, 0.15);
+  }
+  #resultat{
+    width: 100%;
+    height: 10%;
+    text-align: center;
+  }
   img{
-    border-radius: 15px;
     box-sizing: border-box;
     width: 100%;
     height: 100%;
@@ -123,9 +230,10 @@ export default {
     margin-top: 10px;
   }
   #detail{
+    width: 100%;
     height: 10%;
     vertical-align: bottom;
-    margin-top: 50px;
+    /*flex-wrap: wrap;*/
   }
   h2{
     display: inline-block;
@@ -134,25 +242,24 @@ export default {
     display: inline-block;
   }
   #image{
-    display: inline-block;
     border: 1.5px solid black;
     width: 48%;
     height: 75%;
     margin-top: 15px;
-    border-radius: 15px;
-  }
-  #maps{
-    display: inline-block;
-    border: 1.5px solid black;
-    width: 48%;
-    height: 75%;
-    border-radius: 15px;
+    flex-basis: auto;
+    margin-left: 1%;
   }
   h1{
     text-align: center;
   }
+  h3{
+    padding-top: 20px;
+    box-sizing: border-box;
+    margin:0;
+  }
   #game{
-    border-radius: 20px;
+    display: flex;
+    flex-direction: row wrap;
     border: 2px solid black;
     width: 75%;
     height: 600px;
@@ -160,5 +267,7 @@ export default {
     margin-top: 30px;
     text-align: center;
     background-color: white;
+    box-shadow: 5px 5px 0px #c0c0c0;
+    flex-wrap: wrap;
   }
 </style>
