@@ -1,8 +1,9 @@
 <?php
-namespace \backoffice\Controllers;
+namespace Backoffice\Controllers;
+use \Slim\Views\Twig as View;
 
-class HomeController{
+class HomeController extends Controller{
 	public function index($request, $response){
-		return "home";
+		return $this->view->render($response, "home.twig");
 	}
 }
