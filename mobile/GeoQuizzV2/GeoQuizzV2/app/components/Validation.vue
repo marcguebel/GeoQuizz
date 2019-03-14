@@ -1,7 +1,7 @@
 <template>
     <Page>
     <ActionBar title="My App">
-        <NavigationButton text="Go b" android.systemIcon="ic_menu_back" @tap="changeRoute('Position')" />
+        <NavigationButton text="Go ba" android.systemIcon="ic_menu_back" @tap="changeRoute('Position')" />
     </ActionBar>
     <FlexboxLayout flexDirection="column">
 
@@ -15,7 +15,7 @@
 
 <script>
     import axios from 'axios';
-    var base64Img = require('base64-img');
+    //var base64Img = require('base64-img');
     let LS = require( "nativescript-localstorage" );
     export default {
         data() {
@@ -47,7 +47,7 @@
             },
         },
         mounted() {
-            this.img64 = base64Img.base64(this.img, function(err, data) {})
+            //this.img64 = base64Img.base64(this.img, function(err, data) {})
         }
     }
 </script>

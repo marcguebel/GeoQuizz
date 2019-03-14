@@ -8,7 +8,7 @@
                 <Image alignSelf="center" v-for="img in images" :src="img.src" height="70%"/>
             </FlexboxLayout>
 
-            <button v-if="images.length > 0" text="Suivant" @tap="changeRoute('Position')"/>
+            <button v-if="images.length > 0" text="Suivan" @tap="changeRoute('Position')"/>
         </StackLayout>
     </Page>
 </template>
