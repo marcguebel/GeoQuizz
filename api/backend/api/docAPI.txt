@@ -1,0 +1,160 @@
+Documentation API Backend
+
+========================
+GET: /photos[/]
+
+Description: Récupère toutes les photos
+
+Retourne:
+{
+  	"photos": [{
+	   	"id": ...,
+	    "latitude": ...,
+	    "longitude": ...,
+	    "url": ...
+	},
+	{
+	    "id": ...,
+	    "latitude": ...,
+	    "longitude": ...,
+	    "url": ...
+	}]
+}
+========================
+GET: /photos/{id}[/]
+
+Description: Récupère la photo
+
+id: id de la photo
+
+Retourne:
+{
+  	"photo": {
+	   	"id": ...,
+	    "latitude": ...,
+	    "longitude": ...,
+	    "url": ...
+	}
+}
+========================
+POST: /photos[/]
+
+Description: Enregistre la photo
+
+Body:
+{
+	"latitude": ...,
+	"longitude": ...,
+	"url": ...
+}
+
+Rien n'est renvoyer
+========================
+PUT: /photos/{id}[/]
+
+Description: Enregistre les nouvelles infos
+
+id: id de la photo
+
+Body: 
+{
+	"latitude": ...,
+	"longitude": ...,
+	"url": ...
+}
+
+Rien n'est renvoyer
+========================
+GET: /series[/]
+
+Description: Récupère toutes les séries
+
+Retourne:
+{
+  	"series": [{
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...,
+		"points": [
+			"D": ...,
+			"2D" ...,
+			"3D": ...
+		],
+		"latitude": ...,
+		"longitude": ...,
+		"zoom": ...
+	},
+	{
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...,
+		"points": [
+			"D": ...,
+			"2D" ...,
+			"3D": ...
+		],
+		"latitude": ...,
+		"longitude": ...,
+		"zoom": ...
+	}]
+}
+========================
+GET: /series/{id}[/]
+
+Description: Récupère la série
+
+id: id de la série
+
+Retourne:
+{
+  	"serie": {
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...,
+		"points": [
+			"D": ...,
+			"2D" ...,
+			"3D": ...
+		],
+		"latitude": ...,
+		"longitude": ...,
+		"zoom": ...
+	}
+}
+========================
+PUT: /series/{id}[/]
+
+Description: Enregistre les nouvelles infos
+
+id: id de la série
+
+Body:
+{
+	"ville": ...,
+	"libelle": ...,
+	"distance": ...,
+	"points": ...
+}
+
+Rien n'est renvoyé
+========================
+POST: /series/{serie}/add/{photo}[/]
+
+Description: Ajoute une photo à la série
+
+serie: id de la série
+photo: id de la photo
+
+Rien n'est renvoyé
+========================
+DELETE: /series/{serie}/remove/{photo}[/]
+
+Description: Retire une photo à la série
+
+serie: id de la série
+photo: id de la photo
+
+Rien n'est renvoyé

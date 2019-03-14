@@ -1,0 +1,103 @@
+Documentation API Player
+
+========================
+POST: /game/new[/]
+
+Description: Créer une partie
+
+Body: 
+{
+	"serie": ...,
+	"joueur": ...
+}
+
+	serie: id de la série qui sera utilisée lors de la partie
+	joueur: nom du joueur, qui apparaîtra dans le tableau des scores
+
+Retourne: 
+{
+	"partie": {
+		"id": ...,
+	    "status": 0,
+	    "joueur": ...
+	},
+	"serie": {
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...,
+		"points": [
+			"D": ...,
+			"2D" ...,
+			"3D": ...
+		],
+		"latitude": ...,
+		"longitude": ...,
+		"zoom": ...
+	},
+	"photos": [
+		{
+		    "id": ...,
+		    "latitude": ...,
+			"longitude": ...,
+		    "url": ...
+		}, 
+		{
+		    "id": ...,
+		    "latitude": ...,
+			"longitude": ...,
+		    "url": ...
+		},
+		...
+	]
+}
+========================
+PUT: /game/score/{id}[/]
+
+Description: Enregistrer le score de la partie
+
+id: id de la partie
+
+Body: 
+{
+	"score": ...	
+}
+
+Rien n'est renvoyé
+========================
+GET: /game/leaderboard/{serie}[/]
+
+Description: Récupére les scores en fonction de la série
+
+serie: id de la série
+
+Retourne:
+{
+  "score": [{
+    "joueur": ...,
+    "score": ...
+  }, {
+    "joueur": ...,
+    "score": ...
+  }]
+}
+========================
+GET: /series[/]
+
+Description: Récupère toutes les séries
+
+Retourne:
+{
+  	"series": [{
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...
+	},
+	{
+		"id": ...,
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...
+	}]
+}
