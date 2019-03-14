@@ -5,10 +5,8 @@
 # IMPORTANT :
 #   - ajouter les vhosts des services web dans le fichier /etc/hosts
 #     de la machine hôte :
-#   - api player : https://api.player.local:10443
-#                  http://api.player.local:10080
-#   - api backend : https://api.backend.local:11443
-#                   http://api.backend.local:11080
+#   - api player: http://api.player.local:10080
+#   - api backend: http://api.backend.local:11080
 #
 #
 # accès au service adminer : http://localhost:8080
@@ -40,8 +38,8 @@ services:
       - "10080:80"
       - "10443:443"
     volumes :
-      - ./player/api:/var/www/api
-      - ./player/src:/var/www/src
+      - ./api/player/api:/var/www/api
+      - ./api/player/src:/var/www/src
     working_dir : /var/www/src
     networks:
       - geoquizz_network
@@ -60,8 +58,8 @@ services:
       - "11080:80"
       - "11443:443"
     volumes :
-      - ./backend/api:/var/www/api
-      - ./backend/src:/var/www/src
+      - ./api/backend/api:/var/www/api
+      - ./api/backend/src:/var/www/src
     working_dir : /var/www/src
     networks:
       - geoquizz_network
@@ -83,7 +81,7 @@ services:
     networks:
       - geoquizz_network
     volumes :
-      - ./sql:/var/sql
+      - ./api/sql:/var/sql
 
   adminer:
      image: adminer
