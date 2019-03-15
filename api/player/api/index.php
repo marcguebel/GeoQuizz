@@ -15,17 +15,17 @@ $app = new \Slim\App($config);
 $c = $app->getContainer();
 
 $c['ok'] = function ($c) {
-    $response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);  
+    $response = $c->response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);  
     return $response;
 };
 
 $c['created'] = function ($c) {
-    $response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(201);  
+    $response = $c->response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(201);  
     return $response;
 };
 
 $c['noContent'] = function ($c) {
-    $response = $response->withStatus(204);
+    $response = $c->response->withStatus(204);
     return $response;
 };
 
