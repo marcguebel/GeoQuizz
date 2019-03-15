@@ -5,9 +5,26 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state : {
-		series : false
+		laSerie: false,
+		photos: false,
+		partie: false,
+		series : false,
+		game : false,
+		score: false,
+		pseudo: false,
+		token: false,
+		page: false,		
 	},
 	mutations: {
+		setLaSerie(state, laSerie){
+			state.laSerie = laSerie;
+		},
+		setPhotos(state, photos){
+			state.photos = photos;
+		},
+		setPartie(state, partie){
+			state.partie = partie;
+		},
 		setSeries(state, series){
 			state.series = series;
 		},
@@ -20,18 +37,18 @@ export default new Vuex.Store({
 		setPseudo(state, pseudo){
 			state.pseudo = pseudo
 		},
-		setSerie(state, serie){
-			state.serie = serie;
+		setToken(state, token){
+			state.token = token;
 		},
-		setNameOfSeries(state, name){
-			state.name = name;
+		setPage(state, page){
+			state.page = page;
 		},
 		initialiseStore(state){
 			if(localStorage.getItem('store')){
-				this.replaceState(
-					Object.assign(state, JSON.parse(localStorage.getItem('store')))
-				);
-			}
+                this.replaceState(
+                    Object.assign(state, JSON.parse(localStorage.getItem('store')))
+                );
+            }
 		}
 	}
 })

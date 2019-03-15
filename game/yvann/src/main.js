@@ -8,6 +8,10 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+store.subscribe((mutation, state) => {
+	localStorage.setItem('store', JSON.stringify(state));
+});
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

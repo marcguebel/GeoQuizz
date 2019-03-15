@@ -20,7 +20,7 @@ export default new Router({
       component: game
     },
     {
-      path: '/game/:idSerie/:score/:pseudo',
+      path: '/leaderGame/:idSerie',
       name: 'leaderboard',
       component: leaderboard
     },
