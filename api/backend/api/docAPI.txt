@@ -1,4 +1,4 @@
-Documentation API Backend
+﻿Documentation API Backend
 
 ========================
 GET: /photos[/]
@@ -158,3 +158,27 @@ serie: id de la série
 photo: id de la photo
 
 Rien n'est renvoyé
+========================
+POST: /register[/]
+
+Description: Inscription
+
+Body:
+{
+	"login": ...,
+	"password": ...
+}
+
+Rien n'est renvoyé
+========================
+POST: /login[/]
+
+Description: Connexion
+
+Body:
+{
+	"login": ...,
+	"password": ...
+}
+
+Rien n'est renvoyé, id et login dans la session, token JWT dans l'header
