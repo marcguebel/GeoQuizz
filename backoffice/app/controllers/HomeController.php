@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\Controllers;
+namespace Backoffice\controllers;
 use \Slim\Views\Twig as View;
 
 class HomeController extends Controller{

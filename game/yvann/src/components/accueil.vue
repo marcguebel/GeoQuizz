@@ -29,13 +29,24 @@ export default {
     }
   },
   mounted(){
-    this.series();
+    if(this.$store.state.token != false){
+      this.$router.push('/game/' + this.$store.state.laSerie.id + "/" + this.$store.state.pseudo);
+    }
+    else{
+      this.series();
+      this.$store.commit('setPseudo',false);
+      this.$store.commit('setPhotos',false);
+      this.$store.commit('setPartie',false);
+      this.$store.commit('setLaSerie',false);
+      this.$store.commit('setGame',false);
+      this.$store.commit('setScore',false);
+    }
   },
   methods:{
     series(){
       window.axios.get('https://player-lmaillard.pagekite.me/series').then(response => {
-        this.$store.commit('setNameOfSeries',response.data["series"]);
-        this.$store.state.name.forEach(function(element){
+        this.$store.commit('setSeries',response.data["series"]);
+        this.$store.state.series.forEach(function(element){
           var select = document.getElementById ("select");
           var newOption = new Option (element["libelle"], "value");
           select.options.add (newOption);
@@ -45,7 +56,7 @@ export default {
       });
     },
     test(){
-      this.idSerie = this.$store.state.name[document.getElementById('select').selectedIndex].id
+      this.idSerie = this.$store.state.series[document.getElementById('select').selectedIndex].id
     }
   }
 }

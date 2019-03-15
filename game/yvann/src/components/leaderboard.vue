@@ -17,7 +17,7 @@
 
 <script>
 export default {
- 	name: 'game',
+ 	name: 'leaderboard',
  	data () {
 	    return {
 	    	pseudo: '',
@@ -26,18 +26,18 @@ export default {
 	    }
   	},
  	mounted(){
-    this.pseudo = this.$route.params.pseudo ;
-    this.score = this.$route.params.score;
-    this.serie = this.$route.params.idSerie
-    this.leaderboard();
+ 		this.pseudo = this.$store.state.pseudo
+	    this.score = this.$store.state.score;
+	    this.serie = this.$route.params.idSerie
+	    this.leaderboard();
+	    this.$store.commit('setLaSerie',false);
   	},
   	methods:{
   		rejouer(){
-  			this.$router.push("/game/" + this.pseudo + "/" + this.serie);
+  			this.$router.push("/game/" + this.serie + "/" + this.pseudo);
   		},
   		leaderboard(){
 	  		window.axios.get("https://player-lmaillard.pagekite.me/game/leaderboard/" + this.serie).then(response => {
-	           	console.log(response["data"]["score"]);
 	           	let HTML = "<p id='title'>LEADERBOARD</p>";
 	           	response["data"]["score"].forEach(function(element){
 	           		HTML += "<p id='pseudo'>" + element.joueur + "</p>";

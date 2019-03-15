@@ -1,0 +1,28 @@
+{% extends "templates/app.twig" %}
+{% block content %}
+	<h1 class="m-auto w-40">Inscription</h1>
+	<form method="POST" action="{{ path_for("auth.signup") }}" autocomplete="off">
+		<div class="card border-primary h-100 w-40 m-auto">
+			<div class="card-body">
+				<div class="form-group {{ errors.login ? 'was-validated' : ''}}">
+					<input class="form-control" type="text" required name="login" placeholder="Nom d'utilisateur">
+					{% if errors.login %}
+						<div class="invalid-feedback">
+					  		{{ errors.login | first }}
+						</div>
+					{% endif %}
+				</div>
+				<div class="form-group {{ errors.password ? 'was-validated' : ''}}">
+					<input class="form-control mt-4" type="password" required name="password" placeholder="Mot de passe">
+					{% if errors.password %}
+						<div class="invalid-feedback">
+					  		{{ errors.password | first }}
+						</div>
+					{% endif %}
+				</div>
+				<input type="submit" class="btn btn-primary mr-2 float-right" value="S'inscire">
+				{{ csrf.field | raw }}
+			</div>
+		</div>	
+	</form>
+{% endblock %}

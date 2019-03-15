@@ -3,7 +3,7 @@
       <h1>Bonne chance {{pseudo}}</h1>
       <div id="game">
         <div id="image">
-          <img id="lImage" src="https://i.imgur.com/HBbbnGu.jpg">
+          <img id="lImage" src="../../../../ressources/image/are-you-ready.jpg">
         </div>
         <!--<div id="maps">
           
@@ -13,7 +13,8 @@
         </div>
         <div id="detail">
           <h2 id="bas_gauche">Score : {{score}}</h2>
-          <button id="valider" @click="validation()">Valider</button>      
+          <button id="pause" @click="pause()">pause</button> 
+          <button id="valider" @click="suivant()">Lancer la partie !</button>      
           <h2 id="bas_droite">Photo : {{nbrePhoto}} / 10</h2>
         </div>
       </div>
@@ -28,11 +29,13 @@ export default {
       pseudo: '',
       score: 0,
       serie: false,
-      nbrePhoto: 1,
-      lastlatlng:false,
-      lastLat: false,
-      lastLng: false,
+      nbrePhoto: 0,
+      lastlatlng: false,
       series: false,
+      dateDeb: 0,
+      dateFin: 0,
+      temps: 0,
+      laValidation: false,
     }
   },
   mounted(){
@@ -40,9 +43,18 @@ export default {
       this.$router.push('/');
     }
     else{
-      this.pseudo = this.$route.params.pseudo ;
-      this.serie = this.$route.params.idSerie;
-      this.theSeries();
+      if(this.$store.state.page != false){
+        $("#pause").html("reprendre");
+      }
+      if(this.$store.state.token != false){
+      
+      }
+      else{
+        this.$store.commit('setPseudo',this.$route.params.pseudo);
+        this.pseudo = this.$route.params.pseudo;
+        this.serie = this.$route.params.idSerie;
+        this.theSeries();
+      }
     }   
   },
   methods:{
@@ -52,14 +64,17 @@ export default {
     theSeries(){
       window.axios.post('https://player-lmaillard.pagekite.me/game/new',{
           serie: this.serie,
-          joueur: this.pseudo
+          joueur: this.$store.state.pseudo
         }).then(response => {
-          //console.log(response.data);
+
           let tab = [response.data["photos"],response.data["partie"],response.data["serie"]];
-          this.$store.commit('setSeries',tab);
-           this.createMap();
-           this.createGame();
-           this.createImage();
+          this.$store.commit('setPhotos',response.data["photos"]);
+          this.$store.commit('setPartie',response.data["partie"]);
+          this.$store.commit('setLaSerie',response.data["serie"]);
+          this.$store.commit('setToken',response.data["partie"].id);
+          this.createMap();
+          this.createGame();
+          //this.createImage();
         }).catch(error => {
           console.log(error);
         });
@@ -67,59 +82,120 @@ export default {
     createGame(){
       let tab = [];
       while(tab.length != 10){
-        let nbre = this.getRandomInt(this.$store.state.series[0].length);
+        let good = true;
+        let nbre = this.getRandomInt(this.$store.state.photos.length);
 
-        if(tab.indexOf(nbre) >= 0 ){
+        if(tab.length == 0){
+          tab.push(this.$store.state.photos[nbre]);
         }
         else{
-          tab.push(nbre);
+          for(var i = 0; i < tab.length; i++) {
+            if(tab[i] == this.$store.state.photos[nbre]){
+              good = false;
+            }
+          }
+          if(good){
+            tab.push(this.$store.state.photos[nbre]);
+          }
         }
       }
       this.$store.commit('setGame',tab);
-
     },
     validation(){
+      if(this.laValidation){
+        this.laValidation = false;
+        this.dateFin = new Date();
+        this.temps = Math.round((this.dateFin.getTime() - this.dateDeb.getTime()) / 1000);
 
-      if(this.nbrePhoto < 10){
-        let result = this.Distance(this.lastlatlng.lastLat,this.lastlatlng.lastLng,this.$store.state.series[0][this.$store.state.game[this.nbrePhoto - 1]].latitude,this.$store.state.series[0][this.$store.state.game[this.nbrePhoto - 1]].longitude);
+        let result = this.Distance(this.lastlatlng.lat,this.lastlatlng.lng,this.$store.state.game[this.nbrePhoto - 1].latitude,this.$store.state.game[this.nbrePhoto - 1].longitude);
+
         result = (Math.round(result *1000)/1000) * 1000;
+
+        let points = 0;
         
-        $("#res").html("vous êtes à " + result + " mètres");
+        $("#res").html("Vous avez répondu en " + this.temps.toString() + "s et vous êtes à " + result + " mètres");
+        if(this.$store.state.laSerie.distance > result){
+          points += 5;
+        }
+        else if(this.$store.state.laSerie.distance  * 2 > result){
+          points += 3;
+        }
+        else if(this.$store.state.laSerie.distance  * 3 > result){
+          points += 1;
+        }
+        if(this.temps < 5){
+          points = points * 4;
+        }
+        else if(this.temps < 10){
+          points = points * 2;
+        }
+        else if(this.temps > 20){
+          points = 0;
+        }
+        this.score += points;
 
-        if(this.$store.state.series[2]["distance"] > result){
-          this.score += 5;
+        if(this.nbrePhoto == 10){
+          $("#valider").html("Acces leaderboard");
+          this.$store.commit('setScore',this.score);
+
+          this.$store.commit('setGame',false);
+          this.$store.commit('setPhotos',false);
+          this.$store.commit('setPartie',false);
+          this.$store.commit('setPage',false);
+
+          window.axios.put('https://player-lmaillard.pagekite.me/game/score/' + this.$store.state.token,{
+            score: this.score,
+          }).then(response => {
+            console.log(response.data);
+          }).catch(error => {
+            console.log(error);
+          });
+
+          this.$store.commit('setToken',false);
         }
-        else if(this.$store.state.series[2]["distance"]  * 2 > result){
-          this.score += 3;
-        }
-        else if(this.$store.state.series[2]["distance"]  * 3 > result){
-          this.score += 1;
-        }
-        document.getElementById("game").removeChild(document.getElementById('maps'));        
+      }
+    },
+    suivant(){
+      if($("#maps").html() == undefined){
         this.createMap();
-        this.createImage();
       }
-      this.nbrePhoto++;
-
-      if($("#valider").html() == "Acces leaderboard"){
-        this.$router.push("/game/"+ this.$store.state.series[2].id + "/" + this.score + "/" + this.pseudo);
+      if(this.nbrePhoto == 0){
+        $("#valider").html("prochaine photo");
       }
+      if(this.$store.state.page == false){
 
-      if(this.nbrePhoto == 11){
-        this.nbrePhoto--;
-        $("#valider").html("Acces leaderboard");
-        this.$store.commit('setScore',this.score);
-        window.axios.put('https://player-lmaillard.pagekite.me/game/score/' + this.$store.state.series[1].id,{
-          score: this.score,
-        }).then(response => {
-          console.log(response.data);
-        }).catch(error => {
-          console.log(error);
-        });
+        this.laValidation = true;
+        this.nbrePhoto++;
+
+        if(this.nbrePhoto < 11){
+          document.getElementById("game").removeChild(document.getElementById('maps'));        
+          this.createMap();
+          this.createImage();
+        }
+
+        if($("#valider").html() == "Acces leaderboard"){
+          this.$router.push("/leaderGame/"+ this.$store.state.laSerie.id);
+        }
+        this.dateDeb = new Date();
+      }
+    },
+    pause(){
+      if(this.laValidation == false && this.nbrePhoto != 0 && this.nbrePhoto < 10 && $("#pause").html() == "pause"){
+        this.$store.commit('setPage',this.nbrePhoto);
+        $("#pause").html("reprendre");
+      }
+      else if(this.$store.state.page != false){
+        if($("#maps").html() == undefined){
+          this.createMap();
+        }
+        this.nbrePhoto = this.$store.state.page;
+        this.$store.commit('setPage',false);
+        $("#pause").html("pause");
       }
     },
     createImage(){
-      $("#lImage").attr('src',this.$store.state.series[0][this.$store.state.game[this.nbrePhoto - 1]].url);
+      $("#lImage").attr('src',this.$store.state.game[this.nbrePhoto - 1].url);
+      this.dateDeb = new Date();
     },
     createMap(){
 
@@ -129,31 +205,44 @@ export default {
       var parentDiv = document.getElementById("game");
       parentDiv.insertBefore(newMaps, detail);
 
-      var map = L.map('maps').setView([this.$store.state.series[2]["latitude"], this.$store.state.series[2]["longitude"]], this.$store.state.series[2]["zoom"]); // LIGNE 14
+      var map = L.map('maps').setView([this.$store.state.laSerie["latitude"], this.$store.state.laSerie["longitude"]], this.$store.state.laSerie["zoom"]); // LIGNE 14
 
         var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { // LIGNE 16
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18
         });
 
-        var marker = L.marker([0,0]); 
+        if(this.laValidation == false){
+          var marker = L.marker([1,0]); 
+        }
+        else{
+          var marker = L.marker([0,0]); 
+        }
+        var markerResultat = L.marker([0,0]);
     
         map.addLayer(osmLayer);
-
+        let that = this;
         this.lastlatlng = map.on('click', function(e){
+          if(marker.getLatLng().lat == 0 && marker.getLatLng().lng == 0){
+            this.lat = e.latlng.lat;
+            this.lng = e.latlng.lng;
 
-          this.lastLat = e.latlng.lat;
-          this.lastLng = e.latlng.lng;
+              // Creating a marker
+            marker.setLatLng(e.latlng);
+            markerResultat.setLatLng([that.$store.state.game[that.nbrePhoto - 1].latitude,that.$store.state.game[that.nbrePhoto - 1].longitude])
+              // Adding marker to the map
+            marker.addTo(map);
+            markerResultat.addTo(map);
 
-            // Creating a marker
-            
-          marker.setLatLng(e.latlng);
-             
-            // Adding marker to the map
-          marker.addTo(map);
+            that.validation();
 
-          return e.latlng;
+            return e.latlng;
+          }
         });
+
+
+
+        this.dateDeb = new Date();
     },
     convertRad(input){
       return (Math.PI * input)/180;
@@ -220,6 +309,16 @@ export default {
     margin-right: 10px;
   }
   #valider{
+    background-color: green;
+    border: 1.5px solid black;
+    box-shadow: 2px 2px 0px #555;
+    color: white;
+    width:150px;
+    height: 40px;
+    margin-left: 40px;
+    margin-top: 10px;
+  }
+  #pause{
     background-color: green;
     border: 1.5px solid black;
     box-shadow: 2px 2px 0px #555;
