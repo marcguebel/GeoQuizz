@@ -81,6 +81,11 @@ $app->post('/register[/]', function (Request $request, Response $response, array
     return $controller->register($request, $response, $args);
 });
 
+$app->get('/checkLogin/{login}[/]', function (Request $request, Response $response, array $args) {
+    $controller = new Controller($this);
+    return $controller->checkLogin($request, $response, $args);
+});
+
 $app->post('/login[/]', function (Request $request, Response $response, array $args) {
     $controller = new Controller($this);
     return $controller->login($request, $response, $args);

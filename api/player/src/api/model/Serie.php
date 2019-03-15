@@ -1,5 +1,5 @@
 <?php
-namespace api\player\api\model;
+namespace player\api\model;
 
 class Serie extends \Illuminate\Database\Eloquent\Model{
 	protected $table = "serie";

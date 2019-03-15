@@ -1,5 +1,5 @@
 <?php
-namespace api\player\api\model;
+namespace player\api\model;
 
 class Photo extends \Illuminate\Database\Eloquent\Model{
 	protected $table = "photo";

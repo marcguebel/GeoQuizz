@@ -6,7 +6,7 @@ use \api\backend\api\model\Serie as Serie;
 use \api\backend\api\model\Photo as Photo;
 use \api\backend\api\model\Serie_photo as Serie_photo;
 use \api\backend\api\model\User as User;
-use \api\backend\api\utiks\TokenJWT as TokenJWT;
+use \api\backend\api\utils\TokenJWT as TokenJWT;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
@@ -28,6 +28,8 @@ class Controller{
 			$photo->longitude = $body->longitude;
 			$photo->latitude = $body->latitude;
 			$photo->url = $body->url;
+			$tokenJWT = TokenJWT::decode(explode(" ", $request->getHeader("Authorization")[0])[1]);
+			$photo->idUser = $tokenJWT->id;
 			$photo->save();
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
 			return $response;
@@ -241,24 +243,12 @@ class Controller{
 	public function register(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
-			$test_doublon = User::where("login", "=", $body->login)->first();
-			if($test_doublon == null){
-				$user = new User();
-				$user->id = Uuid::uuid4();
-				$user->login = $body->login;
-				$user->password = password_hash($body->password, PASSWORD_DEFAULT);
-				$user->save();
-				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
-			}
-			else{
-				$data = [
-					"type" => "Error",
-					"error" => "400",
-					"message" => "Doublon"
-				];
-				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(400);
-				$response->getBody()->write(json_encode($data));
-			}
+			$user = new User();
+			$user->id = Uuid::uuid4();
+			$user->login = $body->login;
+			$user->password = password_hash($body->password, PASSWORD_DEFAULT);
+			$user->save();
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
 			return $response;
 		}
 		catch(\Exception $e){
@@ -267,10 +257,17 @@ class Controller{
 				"error" => "400",
 				"message" => "Erreur lors de l'inscription"
 			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(400);
 			$response->getBody()->write(json_encode($data));
 			return $response;	
 		}
+	}
+
+	public function checkLogin(Request $request, Response $response, array $args){
+		$data["count"] = User::where("login", "=", $args["login"])->count();
+		$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+		$response->getBody()->write(json_encode($data));
+		return $response;
 	}
 
 	public function login(Request $request, Response $response, array $args){
@@ -280,9 +277,11 @@ class Controller{
 			$tokenJWT = TokenJWT::new($user->id);
 			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')
 				->withHeader('Authorization', 'Bearer '.$tokenJWT)
-				->withStatus(204);
-			$_SESSION["user"] = $user;
-			unset($_SESSION["user"]->password);
+				->withStatus(200);
+			$data = [
+				"type" => "Resource",
+				"user" => $user
+			];
 		}
 		else{
 			$data = [
@@ -290,9 +289,9 @@ class Controller{
 				"error" => "401",
 				"message" => "Login ou mot de passe erroné"
 			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(401);
-			$response->getBody()->write(json_encode($data));
+			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(401);			
 		}
+		$response->getBody()->write(json_encode($data));
 		return $response;
 	}
 }
