@@ -1,24 +1,24 @@
 <?php
-namespace api\backend\api\controller;
+namespace backend\api\controller;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use \api\backend\api\model\Serie as Serie;
-use \api\backend\api\model\Photo as Photo;
-use \api\backend\api\model\Serie_photo as Serie_photo;
-use \api\backend\api\model\User as User;
-use \api\backend\api\utils\TokenJWT as TokenJWT;
+use \backend\api\model\Serie as Serie;
+use \backend\api\model\Photo as Photo;
+use \backend\api\model\Serie_photo as Serie_photo;
+use \backend\api\model\User as User;
+use \backend\api\utils\TokenJWT as TokenJWT;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\Exception\UnsatisfiedDependencyException;
 
 class Controller{
 	private $container;
+
 	public function __construct(\Slim\Container $container){
 		$this->container = $container;
 	}
 
 	public function doc(Request $request, Response $response, array $args){
-		$response->getBody()->write(file_get_contents("docAPI.txt"));
-		return $response;
+		return $response->getBody()->write(file_get_contents("docAPI.txt"));		
 	}
 
 	public function newPhoto(Request $request, Response $response, array $args){
@@ -31,133 +31,79 @@ class Controller{
 			$tokenJWT = TokenJWT::decode(explode(" ", $request->getHeader("Authorization")[0])[1]);
 			$photo->idUser = $tokenJWT->id;
 			$photo->save();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
-			return $response;
+			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Problème lors de la création de la photo"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->forbidden;
 		}
 	}
 
 	public function photos(Request $request, Response $response, array $args){
 		try{
-			$photos = Photo::all();
-			$data["photos"] = $photos;
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+			$data["photos"] = Photo::all();
+			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;
 		}
 	}
 
 	public function photo(Request $request, Response $response, array $args){
 		try{
-			$photo = Photo::find($args["id"]);
-			$data["photo"] = $photo;
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+			$data["photo"] = Photo::findOrFail($args["id"]);
+			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;	
 		}
 	}
 
 	public function updatePhoto(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
-			$photo = Photo::find($args["id"]);
+			$photo = Photo::findOrFail($args["id"]);
 			$photo->longitude = $body->longitude;
 			$photo->latitude = $body->latitude;
 			$photo->url = $body->url;
 			$photo->save();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
-			return $response;
+			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;
 		}
 	}
 
 	public function series(Request $request, Response $response, array $args){
 		try{
-			$series = Serie::all();
-			$data["series"] = $series;
+			$data["series"]= Serie::all();
 			foreach ($data["series"] as $serie){
-				$serie->points = [
-					"D" => explode(";", $serie->points)[0],
-					"2D" => explode(";", $serie->points)[1],
-					"3D" => explode(";", $serie->points)[2]
-				];
+				$points = explode(";", $serie->points);
+				$serie->points = ["D" => $points[0], "2D" => $points[1], "3D" => $points[2]];
 			}
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;
 		}
 	}
 
 	public function serie(Request $request, Response $response, array $args){
 		try{
-			$serie = Serie::find($args["id"]);
-			$data["serie"] = $serie;
-			$data["serie"]["points"] = [
-				"D" => explode(";", $serie->points)[0],
-				"2D" => explode(";", $serie->points)[1],
-				"3D" => explode(";", $serie->points)[2]
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+			$data["serie"] = Serie::find($args["id"]);			
+			$points = explode(";", $data["serie"]->points);
+			$serie->points = ["D" => $points[0], "2D" => $points[1], "3D" => $points[2]];
+			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;
 		}
 	}
 
@@ -173,18 +119,10 @@ class Controller{
 			$serie->longitude = $body->longitude;
 			$serie->zoom = $body->zoom;
 			$serie->save();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
-			return $response;
+			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->forbidden;
 		}
 	}
 
@@ -196,47 +134,22 @@ class Controller{
 				$serie_photo->idSerie = $args["serie"];
 				$serie_photo->idPhoto = $args["photo"];
 				$serie_photo->save();
-				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
+				return $this->container->noContent;
 			}
-			else{
-				$data = [
-					"type" => "Error",
-					"error" => "400",
-					"message" => "Doublon"
-				];
-				$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(400);
-				$response->getBody()->write(json_encode($data));
-			}
-			return $response;
+			return $this->container->forbidden;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;	
 		}
 	}
 
 	public function removePhotoSerie(Request $request, Response $response, array $args){
 		try{
-			$serie_photo = Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first();
-			$serie_photo->delete();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
-			return $response;
+			Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first()->delete();
+			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "404",
-				"message" => "Ressource introuvable"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(404);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->notFound;	
 		}
 	}
 
@@ -248,24 +161,16 @@ class Controller{
 			$user->login = $body->login;
 			$user->password = password_hash($body->password, PASSWORD_DEFAULT);
 			$user->save();
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(204);
-			return $response;
+			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			$data = [
-				"type" => "Error",
-				"error" => "400",
-				"message" => "Erreur lors de l'inscription"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(400);
-			$response->getBody()->write(json_encode($data));
-			return $response;	
+			return $this->container->forbidden;
 		}
 	}
 
 	public function checkLogin(Request $request, Response $response, array $args){
 		$data["count"] = User::where("login", "=", $args["login"])->count();
-		$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);
+		$response = $this->container->ok;
 		$response->getBody()->write(json_encode($data));
 		return $response;
 	}
@@ -274,24 +179,13 @@ class Controller{
 		$body = json_decode($request->getBody());
 		$user = User::where("login", "=", $body->login)->first();
 		if($user != null && password_verify($body->password, $user->password)){
-			$tokenJWT = TokenJWT::new($user->id);
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')
-				->withHeader('Authorization', 'Bearer '.$tokenJWT)
-				->withStatus(200);
-			$data = [
-				"type" => "Resource",
-				"user" => $user
-			];
+			$tokenJWT = TokenJWT::new($user->id);			
+			$data = ["type" => "Resource", "user" => $user];
+			$response = $this->container->ok;
+			$response = $response->withHeader("Authorization", "Bearer ".$tokenJWT);
+			$response->getBody()->write(json_encode($data));
+			return $response;
 		}
-		else{
-			$data = [
-				"type" => "Error",
-				"error" => "401",
-				"message" => "Login ou mot de passe erroné"
-			];
-			$response = $response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(401);			
-		}
-		$response->getBody()->write(json_encode($data));
-		return $response;
+		return $this->container->unauthorized;
 	}
 }

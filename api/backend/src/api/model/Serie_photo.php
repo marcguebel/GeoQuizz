@@ -1,5 +1,5 @@
 <?php
-namespace api\backend\api\model;
+namespace backend\api\model;
 
 class Serie_photo extends \Illuminate\Database\Eloquent\Model{
 	protected $table = "serie_photo";

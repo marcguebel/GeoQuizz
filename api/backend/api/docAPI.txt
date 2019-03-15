@@ -1,7 +1,7 @@
 ﻿Documentation API Backend
 
 ========================
-GET: /photos[/]
+GET: /photos
 
 Description: Récupère toutes les photos
 
@@ -21,7 +21,7 @@ Retourne:
 	}]
 }
 ========================
-GET: /photos/{id}[/]
+GET: /photos/{id}
 
 Description: Récupère la photo
 
@@ -50,7 +50,7 @@ Body:
 
 Rien n'est renvoyer
 ========================
-PUT: /photos/{id}[/]
+PUT: /photos/{id}
 
 Description: Enregistre les nouvelles infos
 
@@ -65,7 +65,7 @@ Body:
 
 Rien n'est renvoyer
 ========================
-GET: /series[/]
+GET: /series
 
 Description: Récupère toutes les séries
 
@@ -101,7 +101,7 @@ Retourne:
 	}]
 }
 ========================
-GET: /series/{id}[/]
+GET: /series/{id}
 
 Description: Récupère la série
 
@@ -125,7 +125,7 @@ Retourne:
 	}
 }
 ========================
-PUT: /series/{id}[/]
+PUT: /series/{id}
 
 Description: Enregistre les nouvelles infos
 
@@ -159,7 +159,7 @@ photo: id de la photo
 
 Rien n'est renvoyé
 ========================
-POST: /register[/]
+POST: /register
 
 Description: Inscription
 
@@ -171,7 +171,7 @@ Body:
 
 Rien n'est renvoyé
 ========================
-POST: /login[/]
+POST: /login
 
 Description: Connexion
 
