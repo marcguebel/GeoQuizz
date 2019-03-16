@@ -1,22 +1,30 @@
 import Vue from 'nativescript-vue'
 import Picture from './components/Picture'
-import VueDevtools from 'nativescript-vue-devtools'
-import routes from './router'
-import axios from 'axios';
-var geolocation = require("nativescript-geolocation");
+//import VueDevtools from 'nativescript-vue-devtools'
 
-require( "nativescript-localstorage" );
-localStorage.setItem('Another Plugin', 'By Master Technology');
-
-if(TNS_ENV !== 'production') {
-  Vue.use(VueDevtools)
-}
-
+//Pour utiliser le router non implémenté-> on crée nous même un routeur, voir router/index.js
+import routes from './router' 
 Vue.prototype.$routes = routes;
 
-// Prints Vue logs when --env.production is *NOT* set while building
+//Intégration mabox
+import Mapbox from 'mapbox-gl-vue';
+Vue.registerElement("Mapbox", () => require("nativescript-mapbox").MapboxView) // Pour pouvoir utiliser l'element mapbox
+
+//Intégration axios
+import axios from 'axios'; 
+
+//Intégration geolocation
+var geolocation = require("nativescript-geolocation");
+
+//Intégration localstorage
+require( "nativescript-localstorage" ); 
+
+/*if(TNS_ENV !== 'production') {
+  	Vue.use(VueDevtools)
+}*/
+
 Vue.config.silent = (TNS_ENV === 'production')
 
 new Vue({
-  render: h => h('frame', [h(Picture)])
+  	render: h => h('frame', [h(Picture)])
 }).$start()
