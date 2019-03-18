@@ -2,7 +2,6 @@
 require_once "../src/vendor/autoload.php";
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use \player\api\controller\Controller as Controller;
 
 $config = ['settings' => [
     'determineRouteBeforeAppMiddleware' => true,
@@ -36,7 +35,7 @@ $c['notFound'] = function ($c) {
 };
 
 $c["Controller"] = function($c){
-    return new Controller($c);
+    return new \player\api\controller\Controller($c);
 };
 
 $db = new Illuminate\Database\Capsule\Manager();

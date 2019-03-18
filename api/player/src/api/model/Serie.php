@@ -7,6 +7,6 @@ class Serie extends \Illuminate\Database\Eloquent\Model{
 	public $timestamps = false;
 
 	public function photos(){
-		return $this->belongsToMany("api\player\api\model\Photo", "serie_photo", "idSerie", "idPhoto");
+		return $this->belongsToMany("player\api\model\Photo", "serie_photo", "idSerie", "idPhoto");
 	}
 }

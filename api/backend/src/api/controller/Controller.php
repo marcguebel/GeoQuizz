@@ -27,11 +27,10 @@ class Controller{
 			$photo = new Photo();
 			$photo->longitude = $body->longitude;
 			$photo->latitude = $body->latitude;
-			$photo->url = $body->url;
-			$tokenJWT = TokenJWT::decode(explode(" ", $request->getHeader("Authorization")[0])[1]);
-			$photo->idUser = $tokenJWT->id;
+			$photo->url = $body->url;			
+			$photo->idUser = $body->idUser;
 			$photo->save();
-			return $this->container->noContent;
+			return $this->container->created;
 		}
 		catch(\Exception $e){
 			return $this->container->forbidden;
@@ -41,6 +40,23 @@ class Controller{
 	public function photos(Request $request, Response $response, array $args){
 		try{
 			$data["photos"] = Photo::all();
+			$response = $this->container->ok;
+			$response->getBody()->write(json_encode($data));
+			return $response;
+		}
+		catch(\Exception $e){
+			return $this->container->notFound;
+		}
+	}
+
+	public function photosAdd(Request $request, Response $response, array $args){
+		try{
+			$serie_photo = Serie_photo::select("idPhoto")->where("idSerie", "=", $args["serie"])->get();
+			$idNotIn = [];
+			foreach ($serie_photo as $element) {
+				array_push($idNotIn, $element->idPhoto);
+			}
+			$data["photos"] = Photo::whereNotIn("id", $idNotIn)->where("idUser", "=", $args["user"])->get();
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -82,7 +98,7 @@ class Controller{
 			$data["series"]= Serie::all();
 			foreach ($data["series"] as $serie){
 				$points = explode(";", $serie->points);
-				$serie->points = ["D" => $points[0], "2D" => $points[1], "3D" => $points[2]];
+				$serie->points = [$points[0], $points[1], $points[2]];
 			}
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
@@ -95,15 +111,42 @@ class Controller{
 
 	public function serie(Request $request, Response $response, array $args){
 		try{
-			$data["serie"] = Serie::find($args["id"]);			
+			$data["serie"] = Serie::findOrFail($args["id"]);			
 			$points = explode(";", $data["serie"]->points);
-			$serie->points = ["D" => $points[0], "2D" => $points[1], "3D" => $points[2]];
+			$data["serie"]->points = ["3D" => $points[0], "2D" => $points[1], "D" => $points[2]];
+			$data["photos"] = $data["serie"]->photos()->get();
+			foreach($data["photos"] as $photo){
+				unset($photo->idUser);
+				unset($photo->pivot);
+			}
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
 		catch(\Exception $e){
 			return $this->container->notFound;
+		}
+	}
+
+	public function newSerie(Request $request, Response $response, array $args){
+		try{
+			$body = json_decode($request->getBody());
+			$serie = new Serie();
+			$serie->ville = $body->ville;
+			$serie->libelle = $body->libelle;
+			$serie->distance = $body->distance;
+			$serie->points = $body->points;
+			$serie->latitude = $body->latitude;
+			$serie->longitude = $body->longitude;
+			$serie->zoom = $body->zoom;
+			$serie->save();
+			$response = $this->container->created;
+			$data["serie"] = $serie->id;
+			$response->getBody()->write(json_encode($data));
+			return $response;
+		}
+		catch(\Exception $e){
+			return $this->container->forbidden;
 		}
 	}
 
@@ -122,7 +165,7 @@ class Controller{
 			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->notFound;
 		}
 	}
 
@@ -161,7 +204,7 @@ class Controller{
 			$user->login = $body->login;
 			$user->password = password_hash($body->password, PASSWORD_DEFAULT);
 			$user->save();
-			return $this->container->noContent;
+			return $this->container->created;
 		}
 		catch(\Exception $e){
 			return $this->container->forbidden;
@@ -179,10 +222,9 @@ class Controller{
 		$body = json_decode($request->getBody());
 		$user = User::where("login", "=", $body->login)->first();
 		if($user != null && password_verify($body->password, $user->password)){
-			$tokenJWT = TokenJWT::new($user->id);			
-			$data = ["type" => "Resource", "user" => $user];
+			unset($user->password);			
+			$data = ["user" => $user];
 			$response = $this->container->ok;
-			$response = $response->withHeader("Authorization", "Bearer ".$tokenJWT);
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
