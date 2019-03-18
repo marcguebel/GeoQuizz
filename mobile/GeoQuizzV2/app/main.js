@@ -1,7 +1,6 @@
 import Vue from 'nativescript-vue'
-import Picture from './components/Picture'
+import Login from './components/Login'
 //import VueDevtools from 'nativescript-vue-devtools'
-
 //Pour utiliser le router non implémenté-> on crée nous même un routeur, voir router/index.js
 import routes from './router' 
 Vue.prototype.$routes = routes;
@@ -26,5 +25,5 @@ require( "nativescript-localstorage" );
 Vue.config.silent = (TNS_ENV === 'production')
 
 new Vue({
-  	render: h => h('frame', [h(Picture)])
+  	render: h => h('frame', [h(Login)])
 }).$start()
