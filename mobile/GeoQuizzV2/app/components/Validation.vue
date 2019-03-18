@@ -1,57 +1,75 @@
 <template>
     <Page>
-    <ActionBar title="My App">
-        <NavigationButton text="Go ba" android.systemIcon="ic_menu_back" @tap="changeRoute('Position')" />
-    </ActionBar>
-    <FlexboxLayout flexDirection="column">
-
-        <label>{{lat}}</label><label>{{long}}</label><label>{{img64}}</label>
-        <Image id="preview" :src="img" style="height:70%"/>
-        <button text="Valider" @tap="validation"/>
-    </FlexboxLayout>
+        <ActionBar :title="'Bienvenue ' + userLog">
+            <NavigationButton text="Retou" android.systemIcon="ic_menu_back" @tap="changeRoute('Position')" />
+            <ActionItem @tap="deco" ios.systemIcon="9" ios.position="left" android.systemIcon="ic_delete" android.position="actionBar"></ActionItem>
+        </ActionBar>
+        <FlexboxLayout flexDirection="column">
+            <Progress id="pB" :value="currentProgress" />
+            <Label>Latitude : {{lat}}</Label>
+            <Label>Longitude : {{long}}</Label>
+            <Image id="preview" :src="img" style="height:70%"/>
+            <button id="btnV" text="Valider" @tap="validation"/>
+        </FlexboxLayout>
     </Page>
-    
 </template>
 
 <script>
     import axios from 'axios';
-    //var base64Img = require('base64-img');
     let LS = require( "nativescript-localstorage" );
     export default {
         data() {
             return {
-                img: LS.getItem('img'),
-                lat: LS.getItem('lat'),
-                long: LS.getItem('long'),
-                img64: '',
+                img : LS.getItem('img'),
+                img64 : LS.getItem('img64'),
+                lat : parseFloat(LS.getItem('lat')),
+                long : parseFloat(LS.getItem('long')),
+                userId : LS.getItem('userId'),
+                userLog : LS.getItem('userLog'),
+                currentProgress : 0
             }
         },
         methods: {
-            changeRoute(to){
-                this.$navigateTo(this.$routes[to], { clearHistory: true});
-            },
             validation(){
-                /*let axiosConfig = {
-                  headers: {
-                      'Authorization': 'Client-ID c0c7cb0b6d1041e',
-                      'Authorization': 'Bearer 26981291d8de19e64af6cba81ce4bcf65476e29e',
-                  }
-                };
-                axios.post('https://api.imgur.com/3/image', this.img64, axiosConfig)
-                .then((res) => {
-                  console.log("RESPONSE RECEIVED: ", res);
+                this.currentProgress = 10
+                var bodyFormData = new FormData();
+                bodyFormData.append("file", this.img64)
+                bodyFormData.append("upload_preset", "rw2vmwqe")
+                this.currentProgress = 20
+                axios.post("https://api.cloudinary.com/v1_1/dvxlz9kaz/image/upload", bodyFormData)
+                .then(res => {
+                    this.currentProgress = 50
+                    let urlImg = res.data.secure_url
+                    this.currentProgress = 70
+                    axios.post("https://backend-lmaillard.pagekite.me/photos", {
+                        latitude: this.lat,
+                        longitude: this.long,
+                        url: urlImg,
+                        idUser: this.userId
+                    })
+                    .then(res => {
+                        this.currentProgress = 100
+                        console.log ('ok')
+                        this.changeRoute('End')
+                    })
+                    .catch((e)=>{
+                        this.currentProgress = 0
+                        console.log('error :/')
+                    })
                 })
-                .catch((err) => {
-                  console.log("AXIOS ERROR: ", err);
-                })*/
+                .catch((e)=>{
+                    console.log(e.response)
+                })
             },
+            changeRoute(to){this.$navigateTo(this.$routes[to], { clearHistory: true});},
+            deco(){confirm({message: "Se déconnecter ?",okButtonText: "Confirmer",cancelButtonText: "Annuler"}).then(result => {if(result == true){this.changeRoute('Login')}});}
         },
         mounted() {
-            //this.img64 = base64Img.base64(this.img, function(err, data) {})
         }
     }
 </script>
-
+   
 <style scoped>
-    
+    #preview, #btnV{ margin-top: 50px }
+    #pb {background-color:50px;}
 </style>

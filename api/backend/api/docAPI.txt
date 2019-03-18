@@ -1,9 +1,11 @@
 ﻿Documentation API Backend
 
 ========================
-GET: /photos[/]
+GET: /photos
 
 Description: Récupère toutes les photos
+
+ok 200, erreur 404
 
 Retourne:
 {
@@ -21,11 +23,13 @@ Retourne:
 	}]
 }
 ========================
-GET: /photos/{id}[/]
+GET: /photos/{id}
 
 Description: Récupère la photo
 
 id: id de la photo
+
+ok 200, erreur 404
 
 Retourne:
 {
@@ -37,7 +41,7 @@ Retourne:
 	}
 }
 ========================
-POST: /photos[/]
+POST: /photos
 
 Description: Enregistre la photo
 
@@ -45,12 +49,15 @@ Body:
 {
 	"latitude": ...,
 	"longitude": ...,
-	"url": ...
+	"url": ...,
+	"idUser": ...
 }
+
+ok 201, erreur 403
 
 Rien n'est renvoyer
 ========================
-PUT: /photos/{id}[/]
+PUT: /photos/{id}
 
 Description: Enregistre les nouvelles infos
 
@@ -63,11 +70,15 @@ Body:
 	"url": ...
 }
 
+ok 204, erreur 404
+
 Rien n'est renvoyer
 ========================
-GET: /series[/]
+GET: /series
 
 Description: Récupère toutes les séries
+
+ok 200, erreur 404
 
 Retourne:
 {
@@ -101,11 +112,13 @@ Retourne:
 	}]
 }
 ========================
-GET: /series/{id}[/]
+GET: /series/{id}
 
 Description: Récupère la série
 
 id: id de la série
+
+ok 200, erreur 404
 
 Retourne:
 {
@@ -122,10 +135,22 @@ Retourne:
 		"latitude": ...,
 		"longitude": ...,
 		"zoom": ...
-	}
+	},
+	"photos": [{
+	   	"id": ...,
+	    "latitude": ...,
+	    "longitude": ...,
+	    "url": ...
+	},
+	{
+	    "id": ...,
+	    "latitude": ...,
+	    "longitude": ...,
+	    "url": ...
+	}]
 }
 ========================
-PUT: /series/{id}[/]
+PUT: /series/{id}
 
 Description: Enregistre les nouvelles infos
 
@@ -139,6 +164,8 @@ Body:
 	"points": ...
 }
 
+ok 200, erreur 404
+
 Rien n'est renvoyé
 ========================
 POST: /series/{serie}/add/{photo}[/]
@@ -147,6 +174,8 @@ Description: Ajoute une photo à la série
 
 serie: id de la série
 photo: id de la photo
+
+ok 204, erreur 404
 
 Rien n'est renvoyé
 ========================
@@ -157,9 +186,11 @@ Description: Retire une photo à la série
 serie: id de la série
 photo: id de la photo
 
+ok 204, erreur 404
+
 Rien n'est renvoyé
 ========================
-POST: /register[/]
+POST: /register
 
 Description: Inscription
 
@@ -169,9 +200,11 @@ Body:
 	"password": ...
 }
 
+ok 201, erreur 403
+
 Rien n'est renvoyé
 ========================
-POST: /login[/]
+POST: /login
 
 Description: Connexion
 
@@ -181,4 +214,13 @@ Body:
 	"password": ...
 }
 
-Rien n'est renvoyé, id et login dans la session, token JWT dans l'header
+ok 200, erreur 401
+
+Retourne:
+{
+	"type": ...,
+	"user": {
+		"id": ...
+		"login": ...
+	}
+}

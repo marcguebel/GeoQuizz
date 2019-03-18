@@ -110,6 +110,9 @@ module.exports = env => {
             "setImmediate": false,
             "fs": "empty",
             "__dirname": false,
+            "net": 'empty',
+            "tls": 'empty',
+            "dns": 'empty',
         },
         devtool: "none",
         optimization: {

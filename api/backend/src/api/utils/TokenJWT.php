@@ -1,6 +1,6 @@
 <?php 
 use Firebase\JWT\JWT;
-namespace api\backend\api\utils;
+namespace backend\api\utils;
 class TokenJWT{
 	public static function new($id){
 		$token = \Firebase\JWT\JWT::encode([

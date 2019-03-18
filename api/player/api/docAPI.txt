@@ -1,7 +1,7 @@
 Documentation API Player
 
 ========================
-POST: /game/new[/]
+POST: /game/new
 
 Description: Créer une partie
 
@@ -52,7 +52,7 @@ Retourne:
 	]
 }
 ========================
-PUT: /game/score/{id}[/]
+PUT: /game/score/{id}
 
 Description: Enregistrer le score de la partie
 
@@ -65,7 +65,20 @@ Body:
 
 Rien n'est renvoyé
 ========================
-GET: /game/leaderboard/{serie}[/]
+PUT: /game/status/{id}
+
+Description: Enregistrer le status de la partie
+
+id: id de la partie
+
+Body: 
+{
+	"status": ...	
+}
+
+Rien n'est renvoyé
+========================
+GET: /game/leaderboard/{serie}
 
 Description: Récupére les scores en fonction de la série
 
@@ -82,7 +95,7 @@ Retourne:
   }]
 }
 ========================
-GET: /series[/]
+GET: /series
 
 Description: Récupère toutes les séries
 

@@ -2,7 +2,6 @@
 require_once "../src/vendor/autoload.php";
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use \api\player\api\controller\Controller as Controller;
 
 $config = ['settings' => [
     'determineRouteBeforeAppMiddleware' => true,
@@ -14,16 +13,29 @@ $app = new \Slim\App($config);
 
 $c = $app->getContainer();
 
-$container["notFoundHandler"] = function ($c) {
-    return function ($request, $response) use ($c) {
-        throw new Exception("Api Not Found", 404);
-    };
+$c['ok'] = function ($c) {
+    $response = $c->response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(200);  
+    return $response;
 };
 
-$container["notAllowedHandler"] = function ($c) {
-    return function ($request, $response) use ($c) {
-        throw new Exception("Method Not Allowed", 405);
-    };
+$c['created'] = function ($c) {
+    $response = $c->response->withHeader('Content-type', 'application/json; charset=utf-8')->withStatus(201);  
+    return $response;
+};
+
+$c['noContent'] = function ($c) {
+    $response = $c->response->withStatus(204);
+    return $response;
+};
+
+$c['notFound'] = function ($c) {
+    $response = $c->response->withHeader('Content-type', "text/html")->withStatus(404);
+    $response->getBody()->write("Page not found");
+    return $response;
+};
+
+$c["Controller"] = function($c){
+    return new \player\api\controller\Controller($c);
 };
 
 $db = new Illuminate\Database\Capsule\Manager();
@@ -31,29 +43,14 @@ $db->addConnection(parse_ini_file("conf/conf.ini"));
 $db->setAsGlobal();
 $db->bootEloquent();
 
-$app->post('/game/new[/]', function (Request $request, Response $response, array $args) {
-    $controller = new Controller($this);
-    return $controller->newGame($request, $response, $args);
-});
+require __DIR__."/routes.php";
 
-$app->put('/game/score/{id}[/]', function (Request $request, Response $response, array $args) {
-    $controller = new Controller($this);
-    return $controller->score($request, $response, $args);
-});
-
-$app->get('/game/leaderboard/{serie}[/]', function (Request $request, Response $response, array $args) {
-    $controller = new Controller($this);
-    return $controller->leaderboard($request, $response, $args);
-});
-
-$app->get('/series[/]', function (Request $request, Response $response, array $args) {
-    $controller = new Controller($this);
-    return $controller->series($request, $response, $args);
-});
-
-$app->get('/doc[/]', function (Request $request, Response $response, array $args) {
-    $controller = new Controller($this);
-    return $controller->doc($request, $response, $args);
+$app->add(function ($req, $res, $next) {
+    $response = $next($req, $res);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT');
 });
 
 $app->run();

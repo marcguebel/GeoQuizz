@@ -1,5 +1,5 @@
 <?php
-namespace api\backend\api\model;
+namespace backend\api\model;
 
 class User extends \Illuminate\Database\Eloquent\Model{
 	protected $table = "user";
