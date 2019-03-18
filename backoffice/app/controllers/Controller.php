@@ -3,8 +3,10 @@ namespace Backoffice\controllers;
 
 class Controller{
 	protected $container;
+	protected $baseUrl;
 	public function __construct($container){
 		$this->container = $container;
+		$this->baseUrl = "backend-lmaillard.pagekite.me";
 	}
 
 	public function __get($property){

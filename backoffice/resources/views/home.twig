@@ -1,4 +1,37 @@
 {% extends "templates/app.twig" %}
 {% block content %}
-	Home
+	<div class="flex-row">
+		<a href="{{ path_for("photo.new") }}" class="h-100">
+			<div class="card h-100 col-lg-6">
+				<div class="card-body d-flex flex-column justify-content-center align-items-center">
+					<i class="fas fa-camera"></i>
+					<h2 class="card-title text-primary mt-4">Ajouter une photo</h4>
+				</div>
+			</div>
+		</a>
+		<a href="{{ path_for("photo.all") }}" class="h-100">
+			<div class="card h-100 col-lg-6">
+				<div class="card-body d-flex flex-column justify-content-center align-items-center">
+					<i class="fas fa-images"></i>
+					<h2 class="card-title text-primary mt-4">Ma galerie de photos</h4>
+				</div>
+			</div>
+		</a>
+		<a href="{{ path_for("serie.new") }}" class="h-100">
+			<div class="card h-100 col-lg-6">
+				<div class="card-body d-flex flex-column justify-content-center align-items-center">
+					<i class="fas fa-plus"></i>
+					<h2 class="card-title text-primary mt-4">Créer une série</h4>
+				</div>
+			</div>
+		</a>
+		<a href="{{ path_for("serie.all") }}" class="h-100">
+			<div class="card h-100 col-lg-6">
+				<div class="card-body d-flex flex-column justify-content-center align-items-center">
+					<i class="fas fa-list"></i>
+					<h2 class="card-title text-primary mt-4">Les séries</h4>
+				</div>
+			</div>
+		</a>
+	</div>
 {% endblock %}

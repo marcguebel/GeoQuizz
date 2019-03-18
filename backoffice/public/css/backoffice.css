@@ -3,3 +3,58 @@
 	margin: 0 auto;
 	margin-top: 50px;
 }
+
+.fas{
+	font-size: 50px;
+	color: royalblue;
+}
+
+.smallIcon{
+	font-size: 20px;
+	margin-right: 7px;
+}
+
+.smallIcon:hover{
+	color: white;
+}
+
+.card:hover{
+	border: 1px solid royalblue;
+}
+
+img{
+	width: 100%;
+}
+
+.blockPhoto{
+	height: 300px !important;
+}
+
+.blockPhoto{
+	height: 300px !important;
+}
+
+.blockPhoto img{
+	max-height: 200px;
+	height: auto;
+	max-width: 290px;
+	width: auto;
+}
+
+span{
+	color: #999;
+	font-size: 16px;
+}
+
+.h4-photo{
+	width: fit-content;
+}
+
+.iconEdit{
+	font-size: 24px;
+	color: #999;
+}
+
+.iconEdit:hover{
+	color: dodgerblue;
+}
