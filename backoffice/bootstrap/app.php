@@ -36,7 +36,7 @@ $container["view"] = function($container){
 };
 
 $container["validator"] = function($container){
-	return new \Backoffice\validation\Validator;
+	return new \Backoffice\Validation\Validator;
 };
 
 $container["HomeController"] = function($container){

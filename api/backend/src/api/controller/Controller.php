@@ -113,7 +113,7 @@ class Controller{
 		try{
 			$data["serie"] = Serie::findOrFail($args["id"]);			
 			$points = explode(";", $data["serie"]->points);
-			$data["serie"]->points = ["3D" => $points[0], "2D" => $points[1], "D" => $points[2]];
+			$data["serie"]->points = ["pts1" => $points[0], "pts2" => $points[1], "pts3" => $points[2]];
 			$data["photos"] = $data["serie"]->photos()->get();
 			foreach($data["photos"] as $photo){
 				unset($photo->idUser);

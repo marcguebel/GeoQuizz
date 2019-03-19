@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\middleware;
+namespace Backoffice\Middleware;
 
 class GuestMiddleware extends Middleware{
 	public function __invoke($request, $response, $next){

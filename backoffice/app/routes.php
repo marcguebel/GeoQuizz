@@ -1,6 +1,6 @@
 <?php
-use Backoffice\middleware\AuthMiddleware;
-use Backoffice\middleware\GuestMiddleware;
+use Backoffice\Middleware\AuthMiddleware;
+use Backoffice\Middleware\GuestMiddleware;
 
 $app->group("", function(){
 	$this->get("/auth/signup", "AuthController:getSignUp")->setName("auth.signup");

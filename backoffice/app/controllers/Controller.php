@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\controllers;
+namespace Backoffice\Controllers;
 
 class Controller{
 	protected $container;
