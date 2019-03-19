@@ -11,20 +11,23 @@
 					<div class="form-group">
 						<input class="form-control mt-4" type="text" required name="libelle" placeholder="Description">					
 					</div>
-					<h4>Distance/Points des difficultés :</h4>					
-					<div class="form-group flex-row">						
-						<input class="form-control col-lg-4" type="number" required name="facile" placeholder="Facile">
-						<input class="form-control w-33" type="number" required name="ptsFacile" placeholder="Points">
+					<h4>Distance :</h4>					
+					<div class="form-group">						
+						<input class="form-control w-33" type="number" required name="facile" placeholder="Distance">
 					</div>
-					<div class="form-group">		
-						<input class="form-control col-lg-4" type="number" required name="normal" placeholder="Normal">
-						<input class="form-control w-33" type="number" required name="ptsNormal" placeholder="Points">
+					<h4>Points en fonction de la distance :</h4>	
+					<div class="flex-row">
+						<div class="form-group">
+							<input class="form-control col-lg-4" type="number" required name="pts1" placeholder="Points">
+						</div>
+						<div class="form-group">		
+							<input class="form-control col-lg-4" type="number" required name="pts2" placeholder="Points">
+						</div>
+						<div class="form-group">			
+							<input class="form-control col-lg-4 mb-4" type="number" required name="pts3" placeholder="Points">	
+						</div>
 					</div>
-					<div class="form-group">			
-						<input class="form-control col-lg-4" type="number" required name="difficile" placeholder="Difficile">
-						<input class="form-control w-33" type="number" required name="ptsDifficile" placeholder="Points">	
-					</div>
-					<h4>Coordonnées :</h4>				
+					<h4 class="mt-4">Coordonnées :</h4>				
 					<div class="form-group">						
 						<input class="form-control" type="text" required id="latitude" name="latitude" placeholder="Latitude">
 					</div>
