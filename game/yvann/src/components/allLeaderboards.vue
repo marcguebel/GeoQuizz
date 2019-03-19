@@ -22,19 +22,23 @@ export default {
  	mounted(){
  		this.theSeries();
  		$("#select").change(this.onCompare);
- 		this.leaderboard(1);
   	},
   	methods:{
   		onCompare(){
-  			this.leaderboard($("#select").prop('selectedIndex') + 1);
+  			this.leaderboard(this.$store.state.series[$("#select").prop('selectedIndex')].id);
   		},
   		theSeries(){
-  			this.$store.state.name.forEach(function(element){
-	          	var select = document.getElementById ("select");
-	          	var newOption = new Option (element["libelle"], "value");
-	          	newOption.setAttribute("id","lOption");
-	          	select.options.add (newOption);
-	        }); 
+  			window.axios.get('https://player-lmaillard.pagekite.me/series').then(response => {
+		        this.$store.commit('setSeries',response.data["series"]);
+		        this.$store.state.series.forEach(function(element){
+		          var select = document.getElementById ("select");
+		          var newOption = new Option (element["libelle"], "value");
+		          select.options.add (newOption);
+		        });
+		        this.leaderboard(this.$store.state.series[0].id);
+		      }).catch(error => {
+		        console.log(error);
+		      });
   		},
   		leaderboard(idSerie){
 	  		window.axios.get("https://player-lmaillard.pagekite.me/game/leaderboard/" + idSerie).then(response => {

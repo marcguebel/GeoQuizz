@@ -4,6 +4,7 @@ import accueil from '@/components/accueil'
 import game from '@/components/game'
 import leaderboard from '@/components/leaderboard'
 import allLeaderboard from '@/components/allLeaderboards'
+import clear from '@/components/clear'
 
 Vue.use(Router)
 
@@ -15,7 +16,7 @@ export default new Router({
       component: accueil
     },
     {
-      path: '/game/:idSerie/:pseudo?',
+      path: '/game',
       name: 'game',
       component: game
     },
@@ -28,6 +29,11 @@ export default new Router({
       path: '/leaderboard',
       name: 'allLeaderboard',
       component: allLeaderboard
+    },
+    {
+      path: '/clear',
+      name: 'clear',
+      component: clear
     }
   ]
 })
