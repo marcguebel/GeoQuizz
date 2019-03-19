@@ -13,7 +13,7 @@ export default new Vuex.Store({
 		score: false,
 		pseudo: false,
 		token: false,
-		page: false,		
+		page: false,	
 	},
 	mutations: {
 		setLaSerie(state, laSerie){

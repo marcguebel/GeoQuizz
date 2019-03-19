@@ -12,7 +12,7 @@
         <select id="select" class="classic">
           
         </select>
-        <router-link :to="'game/' + idSerie +'/' + pseudo "><input class='valider' type="button" name="valider" @click="test()" value="Lancer la partie"/></router-link>
+        <router-link to="/game"><input class='valider' type="button" name="valider" @click="test()" value="Lancer la partie"/></router-link>
         <router-link to="/leaderboard"><input class='valider' type="button" name="leaderboard" value="Accéder au leaderboard"/></router-link>
       </form>
     </div>
@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       pseudo: '',
-      idSerie: 0,
+      idSerie: 1,
     }
   },
   mounted(){
@@ -56,7 +56,8 @@ export default {
       });
     },
     test(){
-      this.idSerie = this.$store.state.series[document.getElementById('select').selectedIndex].id
+      this.$store.commit('setLaSerie',this.$store.state.series[document.getElementById('select').selectedIndex].id);
+      this.$store.commit('setPseudo',this.pseudo);
     }
   }
 }
@@ -64,6 +65,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  p{
+    color: #002080;
+  }
   select {
     width: 80%;
     /* styling */
