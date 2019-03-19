@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\auth;
+namespace Backoffice\Auth;
 
 class Auth{
 	public function attempt($login, $password){
@@ -29,6 +29,6 @@ class Auth{
 	}
 
 	public function logout(){
-		unset($_SESSION["user"]);
+		session_destroy();
 	}
 }

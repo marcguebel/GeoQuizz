@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\validation\rules;
+namespace Backoffice\Validation\rules;
 use Respect\Validation\Rules\AbstractRule;
 
 class LoginAvailable extends AbstractRule{

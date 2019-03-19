@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\controllers\auth;
+namespace Backoffice\Controllers\Auth;
 use Backoffice\controllers\Controller;
 use Respect\Validation\Validator as v;
 

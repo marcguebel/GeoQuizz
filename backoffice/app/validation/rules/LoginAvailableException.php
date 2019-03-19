@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\validation\rules;
+namespace Backoffice\Validation\rules;
 use Respect\Validation\Exceptions\ValidationException;
 
 class LoginAvailableException extends ValidationException{

@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\controllers;
+namespace Backoffice\Controllers;
 use \Slim\Views\Twig as View;
 use Respect\Validation\Validator as v;
 

@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\validation;
+namespace Backoffice\Validation;
 use Respect\Validation\Validator as Respect;
 use Respect\Validation\Exceptions\NestedValidationException;
 

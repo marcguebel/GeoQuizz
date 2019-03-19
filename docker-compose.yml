@@ -32,8 +32,8 @@ services:
     environment:
       - VHOST_HOSTNAME=api.player.local
       - VHOST_DOCROOT=/var/www/api
-      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
-      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
     ports:
       - "10080:80"
       - "10443:443"
@@ -51,8 +51,8 @@ services:
     environment:
       - VHOST_HOSTNAME=api.backend.local
       - VHOST_DOCROOT=/var/www/api
-      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
-      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
       - secretJWT=GeoQuizzAtelier2
     ports:
       - "11080:80"
@@ -71,8 +71,8 @@ services:
     environment:
       - VHOST_HOSTNAME=backoffice.local
       - VHOST_DOCROOT=/var/www/backoffice
-      - http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
-      - https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- http_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
+      #- https_proxy=http://www-cache.iutnc.univ-lorraine.fr:3128/
       #- secretJWT=GeoQuizzAtelier2
     ports:
       - "12080:80"

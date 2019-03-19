@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\controllers;
+namespace Backoffice\Controllers;
 use \Slim\Views\Twig as View;
 use Respect\Validation\Validator as v;
 
@@ -67,10 +67,9 @@ class SerieController extends Controller{
 			"points" => $post["pts1"].";".$post["pts2"].";".$post["pts3"],
 			"latitude" => $post["latitude"],
 			"longitude" => $post["longitude"],
-			"zoom" => $post["zoom"],
+			"zoom" => $post["zoom"]
 		];
 		$curlResponse = $curl->put($this->baseUrl."/series/".$args["id"], json_encode($body), true);
-		var_dump($curlResponse);
-		//return $response->withRedirect($this->router->pathFor("serie.details", ["id" => $args["id"]]));
+		return $response->withRedirect($this->router->pathFor("serie.details", ["id" => $args["id"]]));
 	}
 }

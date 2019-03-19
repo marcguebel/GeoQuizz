@@ -27,16 +27,18 @@ $container["view"] = function($container){
 		$container->router,
 		$container->request->getUri()
 	));
-	$view->getEnvironment()->addGlobal("auth", [
-		"check" => $container->auth->check(),
-		"user" => $container->auth->user()
-	]);
+	if($container->auth->check()){
+		$view->getEnvironment()->addGlobal("auth", [
+			"check" => $container->auth->check(),
+			"user" => $container->auth->user()
+		]);
+	}
 	$view->getEnvironment()->addGlobal("flash", $container->flash);
 	return $view;
 };
 
 $container["validator"] = function($container){
-	return new \Backoffice\validation\Validator;
+	return new \Backoffice\Validation\Validator;
 };
 
 $container["HomeController"] = function($container){
