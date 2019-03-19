@@ -10,6 +10,7 @@
       	</div>
       	<div id='rematch'>
       		<input type="button" name="rematch" value='Rejouer' @click='rejouer()'>
+      		<input type="button" name="retourAccueil" value='accueil' @click='accueil()'>
       	</div>
       </div>
     </div>
@@ -26,15 +27,23 @@ export default {
 	    }
   	},
  	mounted(){
- 		this.pseudo = this.$store.state.pseudo
-	    this.score = this.$store.state.score;
-	    this.serie = this.$route.params.idSerie
-	    this.leaderboard();
-	    this.$store.commit('setLaSerie',false);
+ 		if(this.$store.state.token != false){
+ 			this.$router.push('/game/' + this.$store.state.laSerie.id + "/" + this.$store.state.pseudo);
+ 		}
+ 		else if(this.$store.state.score === false){
+ 			this.$router.push('/');
+ 		}
+ 		else{
+ 			this.pseudo = this.$store.state.pseudo
+		    this.score = this.$store.state.score;
+		    this.serie = this.$store.state.laSerie.id;
+		    this.leaderboard();
+ 		}
   	},
   	methods:{
   		rejouer(){
-  			this.$router.push("/game/" + this.serie + "/" + this.pseudo);
+  			this.$store.commit('setLaSerie',this.$store.state.laSerie.id);
+  			this.$router.push("/game");
   		},
   		leaderboard(){
 	  		window.axios.get("https://player-lmaillard.pagekite.me/game/leaderboard/" + this.serie).then(response => {
@@ -57,6 +66,11 @@ export default {
 	           console.log(error);
 	        });
   		},
+  		accueil(){
+  			this.$store.commit('setLaSerie',false);
+		    this.$store.commit('setScore',false);
+  			this.$router.push("/");
+  		}
 	}
 }
 </script>
