@@ -28,8 +28,8 @@ class SerieController extends Controller{
 		$body = [
 			"ville" => $post["ville"],
 			"libelle" => $post["libelle"],
-			"distance" => $post["facile"].";".$post["normal"].";".$post["difficile"],
-			"points" => $post["ptsFacile"].";".$post["ptsNormal"].";".$post["ptsDifficile"],
+			"distance" => $post["distance"],
+			"points" => $post["pts1"].";".$post["pts2"].";".$post["pts3"],
 			"latitude" => $post["latitude"],
 			"longitude" => $post["longitude"],
 			"zoom" => $post["zoom"],
@@ -55,5 +55,21 @@ class SerieController extends Controller{
 		$curlResponse = $curl->get($this->baseUrl."/series/".$args["id"]);
 		$serie = json_decode($curlResponse->response)->serie;
 		return $this->view->render($response, "series/editSerie.twig", ["serie" => $serie, "points" => $serie->points]);
+	}
+
+	public function updateSerie($request, $response, $args){
+		$curl = new \Curl\Curl();
+		$post = $request->getParams();
+		$body = [
+			"ville" => $post["ville"],
+			"libelle" => $post["libelle"],
+			"distance" => $post["distance"],
+			"points" => $post["pts1"].";".$post["pts2"].";".$post["pts3"],
+			"latitude" => $post["latitude"],
+			"longitude" => $post["longitude"],
+			"zoom" => $post["zoom"],
+		];
+		$curlResponse = $curl->put($this->baseUrl."/series/".$args["id"], json_encode($body));
+		return $response->withRedirect($this->router->pathFor("serie.details", ["id" => $args["id"]]));
 	}
 }

@@ -19,6 +19,7 @@ $app->group("", function(){
 	$this->post("/serie", "SerieController:newSerie")->setName("serie.postSerie");
 	$this->get("/series/{id}", "SerieController:getSerie")->setName("serie.details");
 	$this->get("/series/{id}/edit", "SerieController:getSerieEdit")->setName("serie.edit");
+	$this->put("/series/{id}", "SerieController:updateSerie")->setName("serie.update");
 	$this->get("/series/{serie}/remove/{photo}", "SerieController:removePhotoSerie")->setName("serie.removePhoto");
 	$this->get("/series/{serie}/add", "PhotoController:getAddPhoto")->setName("serie.photo");
 	$this->get("/series/{serie}/add/{photo}", "SerieController:addPhotoSerie")->setName("serie.addPhoto");
