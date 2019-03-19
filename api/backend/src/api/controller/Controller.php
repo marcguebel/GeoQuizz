@@ -153,7 +153,7 @@ class Controller{
 	public function updateSerie(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
-			$serie = Serie::find($args["id"]);
+			$serie = Serie::findOrFail($args["id"]);
 			$serie->ville = $body->ville;
 			$serie->libelle = $body->libelle;
 			$serie->distance = $body->distance;

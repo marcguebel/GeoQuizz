@@ -27,10 +27,12 @@ $container["view"] = function($container){
 		$container->router,
 		$container->request->getUri()
 	));
-	$view->getEnvironment()->addGlobal("auth", [
-		"check" => $container->auth->check(),
-		"user" => $container->auth->user()
-	]);
+	if($container->auth->check()){
+		$view->getEnvironment()->addGlobal("auth", [
+			"check" => $container->auth->check(),
+			"user" => $container->auth->user()
+		]);
+	}
 	$view->getEnvironment()->addGlobal("flash", $container->flash);
 	return $view;
 };

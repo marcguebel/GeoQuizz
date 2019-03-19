@@ -67,9 +67,9 @@ class SerieController extends Controller{
 			"points" => $post["pts1"].";".$post["pts2"].";".$post["pts3"],
 			"latitude" => $post["latitude"],
 			"longitude" => $post["longitude"],
-			"zoom" => $post["zoom"],
+			"zoom" => $post["zoom"]
 		];
-		$curlResponse = $curl->put($this->baseUrl."/series/".$args["id"], json_encode($body));
+		$curlResponse = $curl->put($this->baseUrl."/series/".$args["id"], json_encode($body), true);
 		return $response->withRedirect($this->router->pathFor("serie.details", ["id" => $args["id"]]));
 	}
 }
