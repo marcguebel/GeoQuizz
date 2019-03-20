@@ -43,14 +43,8 @@ $db->addConnection(parse_ini_file("conf/conf.ini"));
 $db->setAsGlobal();
 $db->bootEloquent();
 
-require __DIR__."/routes.php";
+$app->add(new \player\api\middleware\Cors($c));
 
-$app->add(function ($req, $res, $next) {
-    $response = $next($req, $res);
-    return $response
-        ->withHeader('Access-Control-Allow-Origin', '*')
-        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT');
-});
+require __DIR__."/routes.php";
 
 $app->run();
