@@ -1,6 +1,6 @@
 # API
 
-Sous répertoire avec le code des 2 API Player et Backend
+Sous-répertoire avec le code des 2 API Player et Backend
 
 ### Pré-requis
 
@@ -28,7 +28,3 @@ composer dump-autoload -o
 * [Eloquent](https://packagist.org/packages/illuminate/database)
 * [ramsey/uuid](https://packagist.org/packages/ramsey/uuid)
 * [firebase/php-jwt](https://packagist.org/packages/firebase/php-jwt)
-
-## Auteurs
-
-* **Louis Maillard**
