@@ -10,7 +10,7 @@ Avoir docker et docker-compose
 
 Après avoir récupérer le dépot Git, se placer à la racine, ouvrir un terminal et exécuter la commande: 
 ```
-docker-composer up -d
+docker-compose up -d
 ```
 Afficher les machines docker avec:
 ```
