@@ -23,23 +23,31 @@ class Controller{
 
 	public function newPhoto(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$body = json_decode($request->getBody());
 			$photo = new Photo();
 			$photo->longitude = $body->longitude;
 			$photo->latitude = $body->latitude;
 			$photo->url = $body->url;			
-			$photo->idUser = $body->idUser;
+			$photo->idUser = $tokenJWT->data;
 			$photo->save();
 			return $this->container->created;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->badRequest;
 		}
 	}
 
 	public function photos(Request $request, Response $response, array $args){
 		try{
-			$data["photos"] = Photo::all();
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$data["photos"] = Photo::where("idUser", "=", $tokenJWT->data)->get();
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -51,12 +59,16 @@ class Controller{
 
 	public function photosAdd(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$serie_photo = Serie_photo::select("idPhoto")->where("idSerie", "=", $args["serie"])->get();
 			$idNotIn = [];
 			foreach ($serie_photo as $element) {
 				array_push($idNotIn, $element->idPhoto);
 			}
-			$data["photos"] = Photo::whereNotIn("id", $idNotIn)->where("idUser", "=", $args["user"])->get();
+			$data["photos"] = Photo::whereNotIn("id", $idNotIn)->where("idUser", "=", $tokenJWT->data)->get();
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -95,10 +107,14 @@ class Controller{
 
 	public function series(Request $request, Response $response, array $args){
 		try{
-			$data["series"]= Serie::all();
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$data["series"]= Serie::where("idUser", "=", $tokenJWT->data)->get();
 			foreach ($data["series"] as $serie){
 				$points = explode(";", $serie->points);
-				$serie->points = [$points[0], $points[1], $points[2]];
+				$serie->points = ["pts1" => $points[0], "pts2" => $points[1], "pts3" => $points[2]];
 			}
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
@@ -130,6 +146,10 @@ class Controller{
 
 	public function newSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$body = json_decode($request->getBody());
 			$serie = new Serie();
 			$serie->ville = $body->ville;
@@ -139,6 +159,7 @@ class Controller{
 			$serie->latitude = $body->latitude;
 			$serie->longitude = $body->longitude;
 			$serie->zoom = $body->zoom;
+			$serie->idUser = $tokenJWT->data;
 			$serie->save();
 			$response = $this->container->created;
 			$data["serie"] = $serie->id;
@@ -146,7 +167,7 @@ class Controller{
 			return $response;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->badRequest;
 		}
 	}
 
@@ -224,7 +245,9 @@ class Controller{
 		if($user != null && password_verify($body->password, $user->password)){
 			unset($user->password);			
 			$data = ["user" => $user];
+			$tokenJWT = TokenJWT::new($user->id);
 			$response = $this->container->ok;
+			$response = $response->withHeader("Authorization", "Bearer ".$tokenJWT);
 			$response->getBody()->write(json_encode($data));
 			return $response;
 		}
