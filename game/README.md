@@ -24,7 +24,9 @@ afin de pouvoir accéder au site lancer la commande suivante au même endroit qu
 npm run dev
 ```
 
-puis rendez-vous a l'adresse suivante : * [player](localhost:8080/#/)
+puis rendez-vous a l'adresse suivante :
+
+* [player](localhost:8080/#/)
 
 ## Développer avec
 
