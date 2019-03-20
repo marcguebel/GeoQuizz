@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\controllers\auth;
+namespace Backoffice\Controllers\Auth;
 use Backoffice\controllers\Controller;
 use Respect\Validation\Validator as v;
 
@@ -41,10 +41,6 @@ class AuthController extends Controller{
 		$auth = $this->auth->attempt($request->getParam("login"), $request->getParam("password"));
 		if(!$auth){
 			$this->flash->addMessage("error", "Login ou mot de passe erroné");
-			return $response->withRedirect($this->router->pathFor("auth.signin"));
-		}
-		if($auth == 503){
-			$this->flash->addMessage("error", "Service indisponible");
 			return $response->withRedirect($this->router->pathFor("auth.signin"));
 		}
 		return $response->withRedirect($this->router->pathFor("home"));

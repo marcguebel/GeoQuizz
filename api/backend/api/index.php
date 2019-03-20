@@ -36,7 +36,7 @@ $c['unauthorized'] = function ($c) {
 
 $c['noHeader'] = function ($c) {
     $response = $c->response->withHeader('Content-type', "text/html")->withStatus(401);
-    $response->getBody()->write("Header authorization missing");
+    $response->getBody()->write("Header authorization missing or wrong");
     return $response;
 };
 

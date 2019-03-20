@@ -16,6 +16,7 @@
   "dependencies": {
     "@vue/devtools": "5.0.0-beta.3",
     "axios": "^0.18.0",
+    "jquery": "^3.3.1",
     "mapbox-gl-vue": "^1.9.0",
     "nativescript-camera": "^4.2.0",
     "nativescript-geolocation": "^5.0.0",

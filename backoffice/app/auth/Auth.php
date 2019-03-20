@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\auth;
+namespace Backoffice\Auth;
 
 class Auth{
 	public function attempt($login, $password){
@@ -8,20 +8,27 @@ class Auth{
 			"login" => $login,
 			"password" => $password		
 		];
-		$curlResponse = $curl->post('backend-lmaillard.pagekite.me/login', json_encode($body));
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
+		$curlResponse = $curl->post('api.backend.local/login', json_encode($body));
 		$response = json_decode($curlResponse->response);
 		if(!$curlResponse->error){
-			if($response != null){
-				$_SESSION["user"] = $response->user;
-				return true;
+			$_SESSION["user"] = $response->user;
+			foreach($curlResponse->response_headers as $key => $value){
+				$header = explode(": ", $value);
+				if($header[0] == "Authorization"){
+					$_SESSION["token"] = explode(" ", $header[1])[1];
+				}
 			}
-			return 503;
+			return true;
 		}
 		return false;
 	}
 
 	public function check(){
-		return isset($_SESSION["user"]);
+		if(isset($_SESSION["user"]) && isset($_SESSION["token"])){
+			return true;
+		}
+		return false;
 	}
 
 	public function user(){
