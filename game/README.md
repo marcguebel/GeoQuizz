@@ -8,7 +8,7 @@ avoir npm
 
 ### Installation
 
-ce rendre dans la partie player (où il y a le fichier "package.json"
+ce rendre dans la partie player (où il y a le fichier "package.json")
 
 ouvrir un terminal a cette endroit
 
