@@ -1,21 +1,27 @@
 <template>
-    <div>
-      <h1>Bonne chance {{pseudo}}</h1>
-      <div id="game">
-        <div id="image">
-          <img id="lImage" src="../../../../ressources/image/are-you-ready.jpg">
+    <div class="flex-row">
+      <div class="col-md-12 p-0">
+        <div class="col-md-12 p-3 text-center">
+          <h1>Bonne chance {{pseudo}}</h1>
         </div>
-        <!--<div id="maps">
+        <div class="col-md-6 hauteur p-0">
+          <img id="lImage" class="h-100 w-100" src="../../../../ressources/image/are-you-ready.jpg">
+        </div>
+        <div class="col-md-6 hauteur p-0" id="laMap">
           
-        </div>-->
-        <div id="resultat">
-          <h3 id="res"></h3>
         </div>
-        <div id="detail">
-          <h2 id="bas_gauche">Score : {{score}}</h2>
-          <button id="pause" @click="pause()">pause</button> 
-          <button id="valider" @click="suivant()">Lancer la partie !</button>      
-          <h2 id="bas_droite">Photo : {{nbrePhoto}} / {{gameNbrePhoto}}</h2>
+        <div class="col-md-12 text-center hauteur-2 pt-4" id="res">
+          
+        </div>
+        <div class="col-md-2 pt-3">
+          <p>Score : {{score}}</p>
+        </div>
+        <div class="col-md-offset-2 col-md-4 text-center pt-5">
+          <button class="form-control background inline" id="pause" @click="pause()">pause</button> 
+          <button class="form-control background inline" id="valider" @click="suivant()">Lancer la partie !</button>  
+        </div>
+        <div class="col-md-offset-2 col-md-2 pt-2">
+          <p>Photos : {{nbrePhoto}} / {{gameNbrePhoto}}</p>
         </div>
       </div>
     </div>
@@ -44,20 +50,41 @@ export default {
       this.$router.push('/');
     }
     else{
-      if(this.$store.state.token != false){
-        $("#pause").html("reprendre");  
-        $("#valider").html("prochaine photo");
-        $("#valider").css("visibility","hidden");
-        $("#valider").css("width","0%");
-        this.nbrePhoto = this.$store.state.page;
-        this.createMap();
+      if(this.$store.state.pause == "F5"){
+        this.$router.push("/");
       }
       else{
-        $("#pause").css("visibility","hidden");
-        $("#pause").css("width","0%");
-        this.pseudo = this.$store.state.pseudo;
-        this.serie = this.$store.state.laSerie;
-        this.theSeries();
+        if(this.$store.state.token != false){
+          this.nbrePhoto = this.$store.state.page;
+          this.createMap();
+          console.log(this.$store.state.page);
+          console.log(this.$store.state.pause);
+          if(this.$store.state.pause == "pasPause"){
+            this.nbrePhoto++;
+          }
+          if(this.$store.state.pause == "Lancer"){
+            $("#valider").html("Lancer la partie !");
+            $("#valider").css("width","100%");
+            $("#valider").css("display","inline-block");
+            $("#pause").css("width","0%");
+            $("#pause").css("display","none");
+          }
+          else{
+            $("#pause").html("reprendre");  
+            $("#valider").html("prochaine photo");
+            $("#valider").css("display","none");
+            $("#valider").css("width","0%");
+          }
+        }
+        else{
+          $("#pause").css("display","none");
+          $("#pause").css("width","0%");
+          this.pseudo = this.$store.state.pseudo;
+          this.serie = this.$store.state.laSerie;
+          this.$store.commit('setPage',0);
+          this.$store.commit('setPause',"Lancer");
+          this.theSeries();
+        }
       }
     }   
   },
@@ -107,6 +134,7 @@ export default {
     },
     validation(){
       if(this.laValidation){
+        this.$store.commit('setPause',"pause");
         this.laValidation = false;
         this.dateFin = new Date();
         this.temps = Math.round((this.dateFin.getTime() - this.dateDeb.getTime()) / 1000);
@@ -117,7 +145,13 @@ export default {
 
         let points = 0;
 
-        $("#res").html("Vous avez répondu en " + this.temps.toString() + "s et vous êtes à " + result + " mètres");
+        let resultatWrite = document.createElement('p');
+        let text = document.createTextNode("Vous avez répondu en " + this.temps.toString() + "s et vous êtes à " + result + " mètres");
+        resultatWrite.appendChild(text);  
+        document.getElementById("res").appendChild(resultatWrite);
+
+        //$("#res").html("<p>Vous avez répondu en " + this.temps.toString() + "s et vous êtes à " + result + " mètres</p>");
+
         if(this.$store.state.laSerie.distance > result){
           points += parseInt(this.$store.state.laSerie.points['D']);
         }
@@ -143,9 +177,10 @@ export default {
         this.$store.commit('setPage',this.nbrePhoto);
 
         if(this.nbrePhoto == this.gameNbrePhoto){
-          $("#pause").css("visibility","hidden");
-          $("#pause").css("width","0%");
+          this.$store.commit('setPause',"F5");
+          $("#pause").css("width","45%");
           $("#valider").html("Ajouter au leaderboard");
+          $("#valider").css("width","45%");
           $("#pause").html("Retour");
           this.$store.commit('setScore',this.score);
 
@@ -166,7 +201,8 @@ export default {
         }
       }
     },
-    suivant(){  
+    suivant(){ 
+      this.$store.commit('setPause',"pasPause"); 
       if(this.nbrePhoto == 0){
         window.axios.put('https://player-lmaillard.pagekite.me/game/status/' + this.$store.state.token,{
           status: "ingame"
@@ -175,9 +211,10 @@ export default {
         }).catch(error => {
           console.log(error);
         });
-        $("#pause").css("visibility","initial");
-        $("#pause").css("width","150px");
+        $("#pause").css("display","inline-block");
+        $("#pause").css("width","45%");
         $("#valider").html("Prochaine photo");
+        $("#valider").css("width","45%");
       }
 
       if($("#maps").html() == undefined){
@@ -190,7 +227,7 @@ export default {
         this.nbrePhoto++;
 
         if(this.nbrePhoto < this.gameNbrePhoto + 1){
-          document.getElementById("game").removeChild(document.getElementById('maps'));        
+          document.getElementById("laMap").removeChild(document.getElementById('maps'));        
           this.createMap();
           this.createImage();
         }
@@ -212,23 +249,26 @@ export default {
       if($("#pause").html() == "Retour"){
         this.$store.commit('setLaSerie',false);
         this.$store.commit('setScore',false);
+        this.$store.commit('setPause',false);
+        this.$store.commit('setPause',"Lancer");
         this.$router.push('/');
       }
       if(this.laValidation == false && this.nbrePhoto != 0 && this.nbrePhoto < 10 && $("#pause").html() == "pause"){
         this.$store.commit('setPage',this.nbrePhoto);
-
+        this.$store.commit('setPause',"pause");
         $("#pause").html("reprendre");
-        $("#valider").css("visibility","hidden");
+        $("#valider").css("display","none");
         $("#valider").css("width","0%");
+        $("#pause").css("width","100%");
       }
-      else if(this.$store.state.page != false && this.laValidation == false){
+      else if($("#pause").html() == "reprendre"){
         if($("#maps").html() == undefined){
           this.createMap();
         }
-        $("#valider").css("visibility","initial");
-        $("#valider").css("width","150px");
-        this.nbrePhoto = this.$store.state.page;
-        this.$store.commit('setPage',false);
+        this.$store.commit('setPause',"pasPause");
+        $("#pause").css("width","45%");
+        $("#valider").css("display","inline-block");
+        $("#valider").css("width","45%");
         $("#pause").html("pause");
         $("#valider").html("prochaine photo");
         this.suivant();
@@ -241,12 +281,12 @@ export default {
     createMap(){
       let newMaps = document.createElement('div');
       newMaps.id = "maps";
-      let detail = document.getElementById("resultat");
-      var parentDiv = document.getElementById("game");
-      parentDiv.insertBefore(newMaps, detail);
-      var map = L.map('maps').setView([this.$store.state.laSerie["latitude"], this.$store.state.laSerie["longitude"]], this.$store.state.laSerie["zoom"]); // LIGNE 14
+      newMaps.setAttribute("class","h-100 w-100");
+      document.getElementById("laMap").appendChild(newMaps);
 
-        var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { // LIGNE 16
+      let map = L.map('maps').setView([this.$store.state.laSerie["latitude"], this.$store.state.laSerie["longitude"]], this.$store.state.laSerie["zoom"]); // LIGNE 14
+
+        let osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { // LIGNE 16
             attribution: '© OpenStreetMap contributors',
             maxZoom: 18
         });
@@ -314,101 +354,26 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .accessory:after {
-    position: absolute;
-    top:  50%;
-    left: 50%;
-    display:block;
-    background-color: hsl(0, 0%, 75%);
-    height: 12px;
-    width:  12px;
-    transform: rotate(45deg);
-    margin-top:  -10px;
-    margin-left: -10px;
-    border-radius: 4px 0;
-    border: 4px solid hsla(0, 0%, 100%, 0.35);
-    background-clip: padding-box;
-    box-shadow: -10px 10px 0 hsla(0, 0%, 100%, 0.15), 10px -10px 0 hsla(0, 0%, 100%, 0.15);
+  .hauteur{
+    height: 500px;  
   }
-  #resultat{
-    width: 100%;
-    height: 10%;
-    text-align: center;
+  .p-0{
+    padding:0;
   }
-  img{
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
+  .hauteur-2{
+    height: 2rem;
   }
-  #bas_gauche{
-    width:150px;
-    float: left;
-    margin-left: 10px;
-  }
-  #bas_droite{
-    width: 200px;
-    float: right;
-    margin-right: 10px;
-  }
-  #valider{
-    background-color: green;
-    border: 1.5px solid black;
-    box-shadow: 2px 2px 0px #555;
-    color: white;
-    width:150px;
-    height: 40px;
-    margin-left: 40px;
-    margin-top: 10px;
-  }
-  #pause{
-    background-color: green;
-    border: 1.5px solid black;
-    box-shadow: 2px 2px 0px #555;
-    color: white;
-    width:150px;
-    height: 40px;
-    margin-left: 40px;
-    margin-top: 10px;
-  }
-  #detail{
-    width: 100%;
-    height: 10%;
-    vertical-align: bottom;
-    /*flex-wrap: wrap;*/
-  }
-  h2{
-    display: inline-block;
-  }
-  input{
-    display: inline-block;
-  }
-  #image{
-    border: 1.5px solid black;
-    width: 48%;
-    height: 75%;
-    margin-top: 15px;
-    flex-basis: auto;
-    margin-left: 1%;
-  }
-  h1{
-    text-align: center;
-  }
-  h3{
-    padding-top: 20px;
-    box-sizing: border-box;
-    margin:0;
-  }
-  #game{
-    display: flex;
-    flex-direction: row wrap;
-    border: 2px solid black;
-    width: 75%;
-    height: 600px;
-    margin: auto;
-    margin-top: 30px;
-    text-align: center;
+  .form-control{
     background-color: white;
-    box-shadow: 5px 5px 0px #c0c0c0;
-    flex-wrap: wrap;
+  }
+  .background{
+    background-color: darkblue;
+    color:white;
+  }
+  .inline{
+    display: inline-block;
+  }
+  .bas{
+    height: 100px;
   }
 </style>

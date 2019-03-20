@@ -1,5 +1,26 @@
 <template>
-    <div>
+	<div class="flex-row">
+      	<div class="col-md-12 p-0">
+        	<div class="col-md-12 p-3 text-center">
+        		<h1>Bien joué {{pseudo}}</h1>
+        	</div>
+        	<div class="col-md-12 text-center pt-4">
+        		<h2 class="dark-blue">Vous avez eu un score total de {{score}} lors de cette série</h2>
+        	</div>
+        	<div class="col-md-offset-4 col-md-4 flex-row bordure text-center background" id="leaderboard">
+        		<div class="col-md-12 text-center">
+        			<h2 class="py-5">LEADERBOARD</h2>
+        		</div>
+        	</div>
+        	<div class="col-md-offset-4 col-md-2 text-center">
+        		<input class="form-control background" type="button" name="retourAccueil" value='accueil' @click='accueil()'>
+        	</div>
+        	<div class="col-md-2 text-center marg-bot">
+        		<input class="form-control background" type="button" name="rematch" value='Rejouer' @click='rejouer()'>
+        	</div>
+    	</div>
+    </div>
+    <!--<div>
       <h1>Bien joué {{pseudo}}</h1>
       <div id="comp">
       	<div id='score'>
@@ -13,7 +34,7 @@
       		<input type="button" name="retourAccueil" value='accueil' @click='accueil()'>
       	</div>
       </div>
-    </div>
+    </div>-->
 </template>
 
 <script>
@@ -47,19 +68,32 @@ export default {
   		},
   		leaderboard(){
 	  		window.axios.get("https://player-lmaillard.pagekite.me/game/leaderboard/" + this.serie).then(response => {
-	           	let HTML = "<p id='title'>LEADERBOARD</p>";
+
 	           	response["data"]["score"].forEach(function(element){
-	           		HTML += "<p id='pseudo'>" + element.joueur + "</p>";
-	           		if(response["data"]["score"][9] != element){
-	           			HTML += "<p id='scorePlayer'>" + element.score + "</p>";
- 						HTML += "<hr class='style3'/>"
-	           		}
-	           		else{
-	           			HTML += "<p id='scorePlayerFinish'>" + element.score + "</p>";
-	           		}
+	           		let laDiv = document.createElement('div');
+	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
+	           		let resultatWrite = document.createElement('p');
+	           		resultatWrite.id = "white";
+	           		let text = document.createTextNode(element.joueur);
+	           		resultatWrite.appendChild(text); 
+	           		laDiv.appendChild(resultatWrite); 
+	           		document.getElementById("leaderboard").appendChild(laDiv);
 
-	           		
-
+	           		laDiv = document.createElement('div');
+	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
+	           		resultatWrite = document.createElement('p');
+	           		resultatWrite.id = "white";
+	           		text = document.createTextNode(element.score);
+	           		resultatWrite.appendChild(text); 
+	           		laDiv.appendChild(resultatWrite); 
+	           		document.getElementById("leaderboard").appendChild(laDiv);
+	           		if(response["data"]["score"][response["data"]["score"].length - 1] != element){
+	           			laDiv = document.createElement('div');
+		       			laDiv.setAttribute("class","col-md-12 text-center");
+		           		let ligne = document.createElement('hr');
+		           		laDiv.appendChild(ligne); 
+		           		document.getElementById("leaderboard").appendChild(laDiv);
+	           		}
 	           	});
 	           	$("#leaderboard").html(HTML);
 	        }).catch(error => {
@@ -76,51 +110,35 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-	#rematch{
-		width: 100%;
+	.dark-blue{
+		color: darkblue;
+	}
+	hr{
+		width: 95%;
+		color: white;
+		margin:0;
+		box-sizing: border-box;
+	}
+	.vertAlign{
+		vertical-align: middle;
 	}
 	h2{
 		margin:auto;
-		padding-top: 200px;
 		width: 75%;
+		color: white;
 	}
-	#leaderboard{
-		/*justify-content: flex-start;*/
-		background-color: #f3f3f3;
-		margin-top:5%;
-		display: flex;
-		flex-direction: row wrap;
-		flex-wrap: wrap;
-		width: 38%;
-		height: 80%;
+	.bordure{
 		border: 1.5px solid black;
-		margin-left: 4%;
-		box-shadow: 3px 3px 0px #c0c0c0;
+		border-radius: 10px;
+		margin-top: 30px;
+		box-shadow: 2px 2px 2px gray;
+		margin-bottom: 30px;
 	}
-	#score{
-		background-color: #f3f3f3;
-		margin-top:5%;
-		text-align: center;
-		margin-left: 3%;
-		width: 52%;
-		height: 80%;
-		border: 1.5px solid black;
-		box-shadow: 3px 3px 0px #c0c0c0;
+	.background{
+		background-color: darkblue;
+    	color:white;
 	}
-  	h1{
-    	text-align: center;
-  	}	
-	#comp{
-		background-color: #d5d8e0;
-	    display: flex;
-	    flex-direction: row wrap;
-	    border: 2px solid black;
-	    width: 75%;
-	    height: 600px;
-	    margin: auto;
-	    margin-top: 30px;
-	    text-align: center;
-	    box-shadow: 5px 5px 0px #c0c0c0;
-	    flex-wrap: wrap;
+	.marg-bot{
+		margin-bottom: 30px;
 	}
 </style>

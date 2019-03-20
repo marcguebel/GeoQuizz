@@ -1,12 +1,24 @@
 <template>
-    <div class='leaderBoards'>
+	<div class="flex-row">
+      	<div class="col-md-12 p-0">
+        	<div class="col-md-12 p-3 text-center">
+        		<select id="select" class="classic">
+          
+        		</select>
+        	</div>
+        	<div class="col-md-offset-4 col-md-4 bordure background" id='leaderboard'>
+        	
+        	</div>
+        </div>
+    </div>
+    <!--<div class='leaderBoards'>
     	<select id="select" class="classic">
           
         </select>
         <div id='leader'>
         	
         </div>
-    </div>
+    </div>-->
 </template>
 
 <script>
@@ -42,15 +54,31 @@ export default {
   		},
   		leaderboard(idSerie){
 	  		window.axios.get("https://player-lmaillard.pagekite.me/game/leaderboard/" + idSerie).then(response => {
-	           	let HTML = "<p id='title'>LEADERBOARD</p>";
+	  			document.getElementById('leaderboard').innerHTML = "";
 	           	response["data"]["score"].forEach(function(element){
-	           		HTML += "<p id='pseudo'>" + element.joueur + "</p>";
-	           		if(response["data"]["score"][9] != element){
-	           			HTML += "<p id='scorePlayer'>" + element.score + "</p>";
- 						HTML += "<hr class='style3'/>"
-	           		}
-	           		else{
-	           			HTML += "<p id='scorePlayerFinish'>" + element.score + "</p>";
+	           		let laDiv = document.createElement('div');
+	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
+	           		let resultatWrite = document.createElement('p');
+	           		resultatWrite.id = "white";
+	           		let text = document.createTextNode(element.joueur);
+	           		resultatWrite.appendChild(text); 
+	           		laDiv.appendChild(resultatWrite); 
+	           		document.getElementById("leaderboard").appendChild(laDiv);
+
+	           		laDiv = document.createElement('div');
+	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
+	           		resultatWrite = document.createElement('p');
+	           		resultatWrite.id = "white";
+	           		text = document.createTextNode(element.score);
+	           		resultatWrite.appendChild(text); 
+	           		laDiv.appendChild(resultatWrite); 
+	           		document.getElementById("leaderboard").appendChild(laDiv);
+	           		if(response["data"]["score"][response["data"]["score"].length - 1] != element){
+	           			laDiv = document.createElement('div');
+		       			laDiv.setAttribute("class","col-md-12 text-center");
+		           		let ligne = document.createElement('hr');
+		           		laDiv.appendChild(ligne); 
+		           		document.getElementById("leaderboard").appendChild(laDiv);
 	           		}
 	           	});
 	           	$("#leader").html(HTML);
@@ -63,83 +91,15 @@ export default {
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-	#leader{
-		background-color: #f3f3f3;
-		width: 70%;
-		height: 75%;
+	.bordure{
 		border: 1.5px solid black;
-		margin:auto;
-		margin-top: 50px;
-		box-shadow: 3px 3px 0px #c0c0c0;
-		display: flex;
-		flex-direction: row wrap;
-		flex-wrap: wrap;
-		text-align: center;
+		border-radius: 10px;
+		margin-top: 30px;
+		box-shadow: 2px 2px 2px gray;
+		margin-bottom: 30px;
 	}
- 	.leaderBoards{
- 		background-color: white;
- 		width: 50%;
- 		height: 650px;
- 		margin:auto;
- 		border: 2px solid black;
- 		margin-top: 2%;
- 		box-shadow: 5px 5px 0px #c0c0c0;
- 	}
-
- 	select{
-	    width: 60%;
-	    /* styling */
-	    background-color: white;
-	    border: thin solid black;
-	    display: inline-block;
-	    font: inherit;
-	    line-height: 1.5em;
-	    padding: 0.5em 3.5em 0.5em 1em;
-
-	    /* reset */
-
-	    margin: 0;      
-	    -webkit-box-sizing: border-box;
-	    -moz-box-sizing: border-box;
-	    box-sizing: border-box;
-	    -webkit-appearance: none;
-	    -moz-appearance: none;
-	    box-shadow: 1px 1px 0px #085394;
-	    margin-left: 20%;
-	    margin-top: 20px;
+	.background{
+		background-color: darkblue;
+    	color:white;
 	}
-
-  	select.classic {
-	    background-image:
-	      linear-gradient(45deg, transparent 50%, white 50%),
-	      linear-gradient(135deg, white 50%, transparent 50%),
-	      linear-gradient(to right, #085394, #085394);
-	    background-position:
-	      calc(100% - 20px) calc(1em + 2px),
-	      calc(100% - 15px) calc(1em + 2px),
-	      100% 0;
-	    background-size:
-	      5px 5px,
-	      5px 5px,
-	      2.5em 2.5em;
-	    background-repeat: no-repeat;
-	  }
-
-  	select.classic:focus {
-	    background-image:
-	      linear-gradient(45deg, white 50%, transparent 50%),
-	      linear-gradient(135deg, transparent 50%, white 50%),
-	      linear-gradient(to right, #085394, #085394);
-	    background-position:
-	      calc(100% - 15px) 1em,
-	      calc(100% - 20px) 1em,
-	      100% 0;
-	    background-size:
-	      5px 5px,
-	      5px 5px,
-	      2.5em 2.5em;
-	    background-repeat: no-repeat;
-	    border-color: grey;
-	    outline: 0;
-	  }
 </style>
