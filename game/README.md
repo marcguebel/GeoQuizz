@@ -26,7 +26,7 @@ npm run dev
 
 puis rendez-vous a l'adresse suivante :
 
-* [player](localhost:8080/#/)
+* [player](https://localhost:8080/#/)
 
 ## Développer avec
 
