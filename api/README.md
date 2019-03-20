@@ -1,4 +1,4 @@
-# API
+# API Player et Backend
 
 Sous-répertoire avec le code des 2 API Player et Backend
 
