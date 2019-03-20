@@ -13,7 +13,7 @@
         		</div>
         	</div>
         	<div class="col-md-offset-4 col-md-2 text-center">
-        		<input class="form-control background" type="button" name="retourAccueil" value='accueil' @click='accueil()'>
+        		<input class="form-control background" type="button" name="retourAccueil" value='Accueil' @click='accueil()'>
         	</div>
         	<div class="col-md-2 text-center marg-bot">
         		<input class="form-control background" type="button" name="rematch" value='Rejouer' @click='rejouer()'>
@@ -31,7 +31,7 @@
       	</div>
       	<div id='rematch'>
       		<input type="button" name="rematch" value='Rejouer' @click='rejouer()'>
-      		<input type="button" name="retourAccueil" value='accueil' @click='accueil()'>
+      		<input type="button" name="retourAccueil" value='Accueil' @click='accueil()'>
       	</div>
       </div>
     </div>-->

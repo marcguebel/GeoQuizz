@@ -15,7 +15,7 @@
           <input class="form-control text-center" type="text" name="pseudo" v-model="pseudo"/>
         </div>
         <div class="col-md-offset-4 col-md-4 text-center p-3">
-          <p>sur quelle série voulez-vous jouer : </p>
+          <p>Sur quelle série voulez-vous jouer ? </p>
         </div>
         <div class="col-md-offset-4 col-md-4 text-center">
           <select id="select" class="form-control aligner">

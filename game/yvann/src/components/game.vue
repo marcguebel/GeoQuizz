@@ -17,7 +17,7 @@
           <p>Score : {{score}}</p>
         </div>
         <div class="col-md-offset-2 col-md-4 text-center pt-5">
-          <button class="form-control background inline" id="pause" @click="pause()">pause</button> 
+          <button class="form-control background inline" id="pause" @click="pause()">Pause</button> 
           <button class="form-control background inline" id="valider" @click="suivant()">Lancer la partie !</button>  
         </div>
         <div class="col-md-offset-2 col-md-2 pt-2">
@@ -70,8 +70,8 @@ export default {
             $("#pause").css("display","none");
           }
           else{
-            $("#pause").html("reprendre");  
-            $("#valider").html("prochaine photo");
+            $("#pause").html("Reprendre");  
+            $("#valider").html("Prochaine photo");
             $("#valider").css("display","none");
             $("#valider").css("width","0%");
           }
@@ -256,12 +256,12 @@ export default {
       if(this.laValidation == false && this.nbrePhoto != 0 && this.nbrePhoto < 10 && $("#pause").html() == "pause"){
         this.$store.commit('setPage',this.nbrePhoto);
         this.$store.commit('setPause',"pause");
-        $("#pause").html("reprendre");
+        $("#pause").html("Reprendre");
         $("#valider").css("display","none");
         $("#valider").css("width","0%");
         $("#pause").css("width","100%");
       }
-      else if($("#pause").html() == "reprendre"){
+      else if($("#pause").html() == "Reprendre"){
         if($("#maps").html() == undefined){
           this.createMap();
         }
@@ -269,8 +269,8 @@ export default {
         $("#pause").css("width","45%");
         $("#valider").css("display","inline-block");
         $("#valider").css("width","45%");
-        $("#pause").html("pause");
-        $("#valider").html("prochaine photo");
+        $("#pause").html("Pause");
+        $("#valider").html("Prochaine photo");
         this.suivant();
       }
     },  
