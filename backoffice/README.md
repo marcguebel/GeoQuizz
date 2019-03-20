@@ -27,7 +27,7 @@ Dans le fichier /etc/hosts de votre machine hôte ajouter:
 ```
 Le backoffice est accessible avec l'url backoffice.local (port 12080 par défaut)
 
-La base de donnée est accessible avec l'url localhost (port 8080 par défaut)
+La base de données est accessible avec l'url localhost (port 8080 par défaut)
 
 ## Développer avec
 
