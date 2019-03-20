@@ -7,9 +7,15 @@
         	<div class="col-md-12 text-center pt-4">
         		<h2 class="dark-blue">Vous avez eu un score total de {{score}} lors de cette série</h2>
         	</div>
-        	<div class="col-md-offset-4 col-md-4 flex-row bordure text-center background" id="leaderboard">
+        	<div class="col-md-offset-4 col-md-4 flex-row bordure text-center " id="leaderboard">
         		<div class="col-md-12 text-center">
-        			<h2 class="py-5">LEADERBOARD</h2>
+        			<h2 class="dark-blue py-5">LEADERBOARD</h2>
+        		</div>
+        		<div class="col-md-offset-1 col-md-4 pt-3 pb-3">
+        			<h2 class="dark-blue">Pseudo</h2>
+        		</div>
+        		<div class="col-md-offset-2 col-md-4 pt-3 pb-3">
+        			<h2 class="dark-blue">Points</h2>
         		</div>
         	</div>
         	<div class="col-md-offset-4 col-md-2 text-center">
@@ -73,7 +79,7 @@ export default {
 	           		let laDiv = document.createElement('div');
 	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
 	           		let resultatWrite = document.createElement('p');
-	           		resultatWrite.id = "white";
+	           		resultatWrite.id = "dark-blue";
 	           		let text = document.createTextNode(element.joueur);
 	           		resultatWrite.appendChild(text); 
 	           		laDiv.appendChild(resultatWrite); 
@@ -82,7 +88,7 @@ export default {
 	           		laDiv = document.createElement('div');
 	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
 	           		resultatWrite = document.createElement('p');
-	           		resultatWrite.id = "white";
+	           		resultatWrite.id = "dark-blue";
 	           		text = document.createTextNode(element.score);
 	           		resultatWrite.appendChild(text); 
 	           		laDiv.appendChild(resultatWrite); 
