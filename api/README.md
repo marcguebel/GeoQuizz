@@ -22,6 +22,17 @@ composer install
 composer dump-autoload -o
 ```
 
+Dans le fichier /etc/hosts de votre machine hôte ajouter:
+```
+127.0.0.1 api.player.local
+127.0.0.1 api.backend.local
+```
+
+## Utilisation
+
+L'API Player peut être utilisé avec l'url api.player.local (port 10080 par défaut)
+L'API Backend peut être utilisé avec l'url api.backend.local (port 11080 par défaut)
+
 ## Développer avec
 
 * [Slim](https://packagist.org/packages/slim/slim)
