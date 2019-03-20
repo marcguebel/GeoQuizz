@@ -23,24 +23,52 @@ class Controller{
 
 	public function newPhoto(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$body = json_decode($request->getBody());
 			$photo = new Photo();
 			$photo->longitude = $body->longitude;
 			$photo->latitude = $body->latitude;
-			$photo->url = $body->url;
-			$tokenJWT = TokenJWT::decode(explode(" ", $request->getHeader("Authorization")[0])[1]);
-			$photo->idUser = $tokenJWT->id;
+			$photo->url = $body->url;			
+			$photo->idUser = $tokenJWT->data;
 			$photo->save();
-			return $this->container->noContent;
+			return $this->container->created;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->badRequest;
 		}
 	}
 
 	public function photos(Request $request, Response $response, array $args){
 		try{
-			$data["photos"] = Photo::all();
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$data["photos"] = Photo::where("idUser", "=", $tokenJWT->data)->get();
+			$response = $this->container->ok;
+			$response->getBody()->write(json_encode($data));
+			return $response;
+		}
+		catch(\Exception $e){
+			return $this->container->notFound;
+		}
+	}
+
+	public function photosAdd(Request $request, Response $response, array $args){
+		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$serie_photo = Serie_photo::select("idPhoto")->where("idSerie", "=", $args["serie"])->get();
+			$idNotIn = [];
+			foreach ($serie_photo as $element) {
+				array_push($idNotIn, $element->idPhoto);
+			}
+			$data["photos"] = Photo::whereNotIn("id", $idNotIn)->where("idUser", "=", $tokenJWT->data)->get();
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -79,10 +107,14 @@ class Controller{
 
 	public function series(Request $request, Response $response, array $args){
 		try{
-			$data["series"]= Serie::all();
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$data["series"]= Serie::where("idUser", "=", $tokenJWT->data)->get();
 			foreach ($data["series"] as $serie){
 				$points = explode(";", $serie->points);
-				$serie->points = ["D" => $points[0], "2D" => $points[1], "3D" => $points[2]];
+				$serie->points = ["pts1" => $points[0], "pts2" => $points[1], "pts3" => $points[2]];
 			}
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
@@ -95,9 +127,14 @@ class Controller{
 
 	public function serie(Request $request, Response $response, array $args){
 		try{
-			$data["serie"] = Serie::find($args["id"]);			
+			$data["serie"] = Serie::findOrFail($args["id"]);			
 			$points = explode(";", $data["serie"]->points);
-			$serie->points = ["D" => $points[0], "2D" => $points[1], "3D" => $points[2]];
+			$data["serie"]->points = ["pts1" => $points[0], "pts2" => $points[1], "pts3" => $points[2]];
+			$data["photos"] = $data["serie"]->photos()->get();
+			foreach($data["photos"] as $photo){
+				unset($photo->idUser);
+				unset($photo->pivot);
+			}
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
@@ -107,10 +144,37 @@ class Controller{
 		}
 	}
 
+	public function newSerie(Request $request, Response $response, array $args){
+		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$body = json_decode($request->getBody());
+			$serie = new Serie();
+			$serie->ville = $body->ville;
+			$serie->libelle = $body->libelle;
+			$serie->distance = $body->distance;
+			$serie->points = $body->points;
+			$serie->latitude = $body->latitude;
+			$serie->longitude = $body->longitude;
+			$serie->zoom = $body->zoom;
+			$serie->idUser = $tokenJWT->data;
+			$serie->save();
+			$response = $this->container->created;
+			$data["serie"] = $serie->id;
+			$response->getBody()->write(json_encode($data));
+			return $response;
+		}
+		catch(\Exception $e){
+			return $this->container->badRequest;
+		}
+	}
+
 	public function updateSerie(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
-			$serie = Serie::find($args["id"]);
+			$serie = Serie::findOrFail($args["id"]);
 			$serie->ville = $body->ville;
 			$serie->libelle = $body->libelle;
 			$serie->distance = $body->distance;
@@ -122,7 +186,7 @@ class Controller{
 			return $this->container->noContent;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->notFound;
 		}
 	}
 
@@ -161,10 +225,10 @@ class Controller{
 			$user->login = $body->login;
 			$user->password = password_hash($body->password, PASSWORD_DEFAULT);
 			$user->save();
-			return $this->container->noContent;
+			return $this->container->created;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->badRequest;
 		}
 	}
 
@@ -179,8 +243,9 @@ class Controller{
 		$body = json_decode($request->getBody());
 		$user = User::where("login", "=", $body->login)->first();
 		if($user != null && password_verify($body->password, $user->password)){
-			$tokenJWT = TokenJWT::new($user->id);			
-			$data = ["type" => "Resource", "user" => $user];
+			unset($user->password);			
+			$data = ["user" => $user->login];
+			$tokenJWT = TokenJWT::new($user->id);
 			$response = $this->container->ok;
 			$response = $response->withHeader("Authorization", "Bearer ".$tokenJWT);
 			$response->getBody()->write(json_encode($data));

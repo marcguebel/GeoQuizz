@@ -30,11 +30,8 @@ class Controller{
 			$data["partie"] = $partie;
 			$serie = $partie->serie()->first();
 			$data["serie"] = $serie;
-			$data["serie"]["points"] = [
-				"D" => explode(";", $serie->points)[0],
-				"2D" => explode(";", $serie->points)[1],
-				"3D" => explode(";", $serie->points)[2]
-			];
+			$points = explode(";", $serie->points);
+			$data["serie"]->points = ["3D" => $points[0], "2D" => $points[1], "D" => $points[2]];
 			$photos = $serie->photos()->get();
 			$data["photos"] = [];		
 			foreach ($photos as $photo){

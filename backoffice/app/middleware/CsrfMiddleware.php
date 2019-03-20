@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\middleware;
+namespace Backoffice\Middleware;
 
 class CsrfMiddleware extends Middleware{
 	public function __invoke($request, $response, $next){

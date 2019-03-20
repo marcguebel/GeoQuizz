@@ -1,9 +1,14 @@
 <?php
-namespace Backoffice\controllers\auth;
+namespace Backoffice\Controllers\Auth;
 use Backoffice\controllers\Controller;
 use Respect\Validation\Validator as v;
 
 class AuthController extends Controller{
+	public function getSignOut($request, $response){
+		$this->auth->logout();
+		return $response->withRedirect($this->router->pathFor("auth.signin"));	
+	}
+
 	public function getSignUp($request, $response){
 		return $this->view->render($response, "auth/signup.twig");
 	}
@@ -22,7 +27,9 @@ class AuthController extends Controller{
 			"login" => $post["login"],
 			"password" => $post["password"]		
 		];
-		$curlResponse = $curl->post('backend-lmaillard.pagekite.me/register', json_encode($body));
+		$curlResponse = $curl->post($this->baseUrl."/register", json_encode($body));
+		$this->flash->addMessage("info", "Inscription réussie");
+		$this->auth->attempt($post["login"], $post["password"]);
 		return $response->withRedirect($this->router->pathFor("home"));	
 	}
 
@@ -33,6 +40,7 @@ class AuthController extends Controller{
 	public function postSignIn($request, $response){
 		$auth = $this->auth->attempt($request->getParam("login"), $request->getParam("password"));
 		if(!$auth){
+			$this->flash->addMessage("error", "Login ou mot de passe erroné");
 			return $response->withRedirect($this->router->pathFor("auth.signin"));
 		}
 		return $response->withRedirect($this->router->pathFor("home"));

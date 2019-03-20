@@ -1,5 +1,5 @@
 <?php
-namespace Backoffice\middleware;
+namespace Backoffice\Middleware;
 
 class Middleware{
 	protected $container;

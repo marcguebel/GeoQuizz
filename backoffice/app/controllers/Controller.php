@@ -1,8 +1,9 @@
 <?php
-namespace Backoffice\controllers;
+namespace Backoffice\Controllers;
 
 class Controller{
 	protected $container;
+	protected $baseUrl = "http://api.backend.local";
 	public function __construct($container){
 		$this->container = $container;
 	}

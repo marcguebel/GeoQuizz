@@ -2,7 +2,6 @@
 require_once "../src/vendor/autoload.php";
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
-use \backend\api\controller\Controller as Controller;
 
 $config = ['settings' => [
     'determineRouteBeforeAppMiddleware' => true,
@@ -35,6 +34,12 @@ $c['unauthorized'] = function ($c) {
     return $response;
 };
 
+$c['noHeader'] = function ($c) {
+    $response = $c->response->withHeader('Content-type', "text/html")->withStatus(401);
+    $response->getBody()->write("Header authorization missing or wrong");
+    return $response;
+};
+
 $c['forbidden'] = function ($c) {
     $response = $c->response->withHeader('Content-type', "text/html")->withStatus(403);
     $response->getBody()->write("Forbidden");
@@ -48,7 +53,7 @@ $c['notFound'] = function ($c) {
 };
 
 $c["Controller"] = function($c){
-    return new Controller($c);
+    return new \backend\api\controller\Controller($c);
 };
 
 $db = new Illuminate\Database\Capsule\Manager();

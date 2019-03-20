@@ -1,14 +1,14 @@
 <?php 
 use Firebase\JWT\JWT;
-namespace api\backend\api\utils;
+namespace backend\api\utils;
 class TokenJWT{
-	public static function new($id){
+	public static function new($data){
 		$token = \Firebase\JWT\JWT::encode([
 			'iss' => 'http://backend-lmaillard.pagekite.me/',
 			'aud' => 'http://backend-lmaillard.pagekite.me/',
 			'iat' => time(),
 			'exp' => time()+3600, 
-			'id' => $id 
+			'data' => $data 
 		], getenv("secretJWT")); 
 		return $token; 
 	} 
@@ -19,6 +19,17 @@ class TokenJWT{
 		} 
 		catch(\Exception $e){ 
 			return false; 
+		}
+	}
+
+	public static function check($request){
+		try{ 
+			$authorization = $request->getHeader("Authorization");
+			$tokenJWT = explode(" ", $authorization[0])[1];
+			return TokenJWT::decode($tokenJWT);
 		} 
-	} 
+		catch(\Exception $e){ 
+			return false; 
+		}
+	}
 }

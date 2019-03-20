@@ -1,0 +1,41 @@
+<div class="flex-row">
+	{% if page %}
+		<h4 class="m-auto h4-photo">Cliquez sur une photo pour 
+		{% if page == "add" %}
+			l'ajouter à 
+		{% elseif page == "remove" %}
+			la retirer de 
+		{% endif %}
+		la série</h4><br/>
+	{% endif %}
+	{% for photo in photos %}		
+		<div class="card col-lg-3 blockPhoto">
+			{% if page %}
+				{% if page == "add" %}
+					<a href="{{ path_for("serie.addPhoto", {"serie": serie, "photo": photo.id}) }}">
+				{% elseif page == "remove" %}
+					<a href="{{ path_for("serie.removePhoto", {"serie": serie.id, "photo": photo.id}) }}">
+				{% endif %}
+			{% endif %}
+			<div class="card-body d-flex flex-column justify-content-center align-items-center">
+				<img src="{{ photo.url }}">
+				<p class="card-title text-primary mt-4">Lat: {{ photo.latitude }} Long: {{ photo.longitude }}</p>
+			</div>
+			{% if page %}
+				</a>
+			{% endif %}
+		</div>
+	{% endfor %}
+	{% if page %}
+		{% if page == "remove" %}
+			<a href="{{ path_for("serie.photo", {"serie": serie.id}) }}">
+				<div class="card col-lg-3 blockPhoto">
+					<div class="card-body d-flex flex-column justify-content-center align-items-center">
+						<i class="fas fa-plus"></i>
+						<p class="card-title text-primary mt-4">Ajouter une photo</p>
+					</div>
+				</div>
+			</a>
+		{% endif %}
+	{% endif %}
+</div>

@@ -14,6 +14,6 @@ class Partie extends \Illuminate\Database\Eloquent\Model{
 	];
 
 	public function serie(){
-		return $this->hasOne("api\player\api\model\Serie", "id", "idSerie");
+		return $this->hasOne("player\api\model\Serie", "id", "idSerie");
 	}
 }

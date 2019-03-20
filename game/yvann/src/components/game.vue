@@ -15,7 +15,7 @@
           <h2 id="bas_gauche">Score : {{score}}</h2>
           <button id="pause" @click="pause()">pause</button> 
           <button id="valider" @click="suivant()">Lancer la partie !</button>      
-          <h2 id="bas_droite">Photo : {{nbrePhoto}} / 10</h2>
+          <h2 id="bas_droite">Photo : {{nbrePhoto}} / {{gameNbrePhoto}}</h2>
         </div>
       </div>
     </div>
@@ -36,23 +36,27 @@ export default {
       dateFin: 0,
       temps: 0,
       laValidation: false,
+      gameNbrePhoto: 10,
     }
   },
   mounted(){
-    if(this.$route.params.pseudo === undefined){
+    if(this.$store.state.pseudo == "" || this.$store.state.pseudo === false){
       this.$router.push('/');
     }
     else{
-      if(this.$store.state.page != false){
-        $("#pause").html("reprendre");
-      }
       if(this.$store.state.token != false){
-      
+        $("#pause").html("reprendre");  
+        $("#valider").html("prochaine photo");
+        $("#valider").css("visibility","hidden");
+        $("#valider").css("width","0%");
+        this.nbrePhoto = this.$store.state.page;
+        this.createMap();
       }
       else{
-        this.$store.commit('setPseudo',this.$route.params.pseudo);
-        this.pseudo = this.$route.params.pseudo;
-        this.serie = this.$route.params.idSerie;
+        $("#pause").css("visibility","hidden");
+        $("#pause").css("width","0%");
+        this.pseudo = this.$store.state.pseudo;
+        this.serie = this.$store.state.laSerie;
         this.theSeries();
       }
     }   
@@ -64,24 +68,24 @@ export default {
     theSeries(){
       window.axios.post('https://player-lmaillard.pagekite.me/game/new',{
           serie: this.serie,
-          joueur: this.$store.state.pseudo
+          joueur: this.pseudo
         }).then(response => {
-
-          let tab = [response.data["photos"],response.data["partie"],response.data["serie"]];
           this.$store.commit('setPhotos',response.data["photos"]);
           this.$store.commit('setPartie',response.data["partie"]);
           this.$store.commit('setLaSerie',response.data["serie"]);
           this.$store.commit('setToken',response.data["partie"].id);
           this.createMap();
           this.createGame();
-          //this.createImage();
         }).catch(error => {
           console.log(error);
         });
     },
     createGame(){
       let tab = [];
-      while(tab.length != 10){
+      if(this.$store.state.photos.length < 10){
+        this.gameNbrePhoto = this.$store.state.photos.length;
+      }
+      while(tab.length != this.gameNbrePhoto){
         let good = true;
         let nbre = this.getRandomInt(this.$store.state.photos.length);
 
@@ -112,17 +116,18 @@ export default {
         result = (Math.round(result *1000)/1000) * 1000;
 
         let points = 0;
-        
+
         $("#res").html("Vous avez répondu en " + this.temps.toString() + "s et vous êtes à " + result + " mètres");
         if(this.$store.state.laSerie.distance > result){
-          points += 5;
+          points += parseInt(this.$store.state.laSerie.points['D']);
         }
         else if(this.$store.state.laSerie.distance  * 2 > result){
-          points += 3;
+          points += parseInt(this.$store.state.laSerie.points["2D"]);
         }
         else if(this.$store.state.laSerie.distance  * 3 > result){
-          points += 1;
+          points += parseInt(this.$store.state.laSerie.points["3D"]);
         }
+
         if(this.temps < 5){
           points = points * 4;
         }
@@ -132,10 +137,16 @@ export default {
         else if(this.temps > 20){
           points = 0;
         }
-        this.score += points;
 
-        if(this.nbrePhoto == 10){
-          $("#valider").html("Acces leaderboard");
+        this.score += points;
+        this.$store.commit('setScore',this.score);
+        this.$store.commit('setPage',this.nbrePhoto);
+
+        if(this.nbrePhoto == this.gameNbrePhoto){
+          $("#pause").css("visibility","hidden");
+          $("#pause").css("width","0%");
+          $("#valider").html("Ajouter au leaderboard");
+          $("#pause").html("Retour");
           this.$store.commit('setScore',this.score);
 
           this.$store.commit('setGame',false);
@@ -146,65 +157,93 @@ export default {
           window.axios.put('https://player-lmaillard.pagekite.me/game/score/' + this.$store.state.token,{
             score: this.score,
           }).then(response => {
-            console.log(response.data);
+
           }).catch(error => {
             console.log(error);
           });
-
+          this.token = this.$store.state.token;
           this.$store.commit('setToken',false);
         }
       }
     },
-    suivant(){
+    suivant(){  
+      if(this.nbrePhoto == 0){
+        window.axios.put('https://player-lmaillard.pagekite.me/game/status/' + this.$store.state.token,{
+          status: "ingame"
+        }).then(response => {
+
+        }).catch(error => {
+          console.log(error);
+        });
+        $("#pause").css("visibility","initial");
+        $("#pause").css("width","150px");
+        $("#valider").html("Prochaine photo");
+      }
+
       if($("#maps").html() == undefined){
         this.createMap();
       }
-      if(this.nbrePhoto == 0){
-        $("#valider").html("prochaine photo");
-      }
-      if(this.$store.state.page == false){
 
+      if(this.laValidation == false){
+        $("#res").html("");
         this.laValidation = true;
         this.nbrePhoto++;
 
-        if(this.nbrePhoto < 11){
+        if(this.nbrePhoto < this.gameNbrePhoto + 1){
           document.getElementById("game").removeChild(document.getElementById('maps'));        
           this.createMap();
           this.createImage();
         }
 
-        if($("#valider").html() == "Acces leaderboard"){
-          this.$router.push("/leaderGame/"+ this.$store.state.laSerie.id);
+        if($("#valider").html() == "Ajouter au leaderboard"){
+          this.nbrePhoto--;
+          window.axios.put('https://player-lmaillard.pagekite.me/game/status/' + this.token,{
+            status: "leaderboard"
+          }).then(response => {
+            this.$router.push("/leaderGame/"+ this.$store.state.laSerie.id);
+          }).catch(error => {
+            console.log(error);
+          });
         }
         this.dateDeb = new Date();
       }
     },
     pause(){
+      if($("#pause").html() == "Retour"){
+        this.$store.commit('setLaSerie',false);
+        this.$store.commit('setScore',false);
+        this.$router.push('/');
+      }
       if(this.laValidation == false && this.nbrePhoto != 0 && this.nbrePhoto < 10 && $("#pause").html() == "pause"){
         this.$store.commit('setPage',this.nbrePhoto);
+
         $("#pause").html("reprendre");
+        $("#valider").css("visibility","hidden");
+        $("#valider").css("width","0%");
       }
-      else if(this.$store.state.page != false){
+      else if(this.$store.state.page != false && this.laValidation == false){
         if($("#maps").html() == undefined){
           this.createMap();
         }
+        $("#valider").css("visibility","initial");
+        $("#valider").css("width","150px");
         this.nbrePhoto = this.$store.state.page;
         this.$store.commit('setPage',false);
         $("#pause").html("pause");
+        $("#valider").html("prochaine photo");
+        this.suivant();
       }
-    },
+    },  
     createImage(){
       $("#lImage").attr('src',this.$store.state.game[this.nbrePhoto - 1].url);
       this.dateDeb = new Date();
     },
     createMap(){
-
       let newMaps = document.createElement('div');
       newMaps.id = "maps";
       let detail = document.getElementById("resultat");
       var parentDiv = document.getElementById("game");
       parentDiv.insertBefore(newMaps, detail);
-
       var map = L.map('maps').setView([this.$store.state.laSerie["latitude"], this.$store.state.laSerie["longitude"]], this.$store.state.laSerie["zoom"]); // LIGNE 14
 
         var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { // LIGNE 16
@@ -216,22 +255,28 @@ export default {
           var marker = L.marker([1,0]); 
         }
         else{
-          var marker = L.marker([0,0]); 
+          var marker = L.marker([0,0]);
         }
         var markerResultat = L.marker([0,0]);
-    
+
+        
         map.addLayer(osmLayer);
+
         let that = this;
         this.lastlatlng = map.on('click', function(e){
           if(marker.getLatLng().lat == 0 && marker.getLatLng().lng == 0){
+
             this.lat = e.latlng.lat;
             this.lng = e.latlng.lng;
 
               // Creating a marker
             marker.setLatLng(e.latlng);
+            //L.marker([this.lat, this.lng], {icon: myIcon}).addTo(map);
+
             markerResultat.setLatLng([that.$store.state.game[that.nbrePhoto - 1].latitude,that.$store.state.game[that.nbrePhoto - 1].longitude])
               // Adding marker to the map
             marker.addTo(map);
+            
             markerResultat.addTo(map);
 
             that.validation();
@@ -239,9 +284,6 @@ export default {
             return e.latlng;
           }
         });
-
-
-
         this.dateDeb = new Date();
     },
     convertRad(input){
