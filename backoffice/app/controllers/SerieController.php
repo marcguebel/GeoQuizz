@@ -6,6 +6,7 @@ use Respect\Validation\Validator as v;
 class SerieController extends Controller{
 	public function getSeries($request, $response){
 		$curl = new \Curl\Curl();
+		$curl->setHeader("Authorization", "Bearer ".$_SESSION["token"]);
 		$curlResponse = $curl->get($this->baseUrl."/series");
 		$series = json_decode($curlResponse->response)->series;
 		return $this->view->render($response, "series/series.twig", ["series" => $series]);
@@ -24,6 +25,7 @@ class SerieController extends Controller{
 
 	public function newSerie($request, $response){
 		$curl = new \Curl\Curl();
+		$curl->setHeader("Authorization", "Bearer ".$_SESSION["token"]);
 		$post = $request->getParams();
 		$body = [
 			"ville" => $post["ville"],
@@ -32,7 +34,7 @@ class SerieController extends Controller{
 			"points" => $post["pts1"].";".$post["pts2"].";".$post["pts3"],
 			"latitude" => $post["latitude"],
 			"longitude" => $post["longitude"],
-			"zoom" => $post["zoom"],
+			"zoom" => $post["zoom"]
 		];
 		$curlResponse = $curl->post($this->baseUrl."/series", json_encode($body));
 		return $response->withRedirect($this->router->pathFor("serie.details", ["id" => json_decode($curlResponse->response)->serie]));

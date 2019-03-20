@@ -43,10 +43,6 @@ class AuthController extends Controller{
 			$this->flash->addMessage("error", "Login ou mot de passe erroné");
 			return $response->withRedirect($this->router->pathFor("auth.signin"));
 		}
-		if($auth == 503){
-			$this->flash->addMessage("error", "Service indisponible");
-			return $response->withRedirect($this->router->pathFor("auth.signin"));
-		}
 		return $response->withRedirect($this->router->pathFor("home"));
 	}
 }
