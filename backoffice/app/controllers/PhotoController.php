@@ -6,6 +6,7 @@ use Respect\Validation\Validator as v;
 class PhotoController extends Controller{
 	public function getPhotos($request, $response){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curl->setHeader("Authorization", "Bearer ".$_SESSION["token"]);
 		$curlResponse = $curl->get($this->baseUrl."/photos");
 		$photos = json_decode($curlResponse->response)->photos;
@@ -32,8 +33,9 @@ class PhotoController extends Controller{
 
 	public function getAddPhoto($request, $response, $args){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curl->setHeader("Authorization", "Bearer ".$_SESSION["token"]);
-		$curlResponse = $curl->get($this->baseUrl."/series/".$args["serie"]."/photos/add/");
+		$curlResponse = $curl->get($this->baseUrl."/series/".$args["serie"]."/photos/add");
 		$photos = json_decode($curlResponse->response)->photos;
 		return $this->view->render($response, "photos/addPhoto.twig", ["serie" => $args["serie"], "photos" => $photos]);
 	}

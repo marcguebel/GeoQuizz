@@ -3,10 +3,9 @@ namespace Backoffice\Controllers;
 
 class Controller{
 	protected $container;
-	protected $baseUrl;
+	protected $baseUrl = "http://api.backend.local";
 	public function __construct($container){
 		$this->container = $container;
-		$this->baseUrl = "https://backend-lmaillard.pagekite.me";
 	}
 
 	public function __get($property){

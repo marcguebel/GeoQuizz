@@ -8,10 +8,11 @@ class Auth{
 			"login" => $login,
 			"password" => $password		
 		];
-		$curlResponse = $curl->post('backend-lmaillard.pagekite.me/login', json_encode($body));
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
+		$curlResponse = $curl->post('api.backend.local/login', json_encode($body));
 		$response = json_decode($curlResponse->response);
 		if(!$curlResponse->error){
-			$_SESSION["user"] = $response->user->login;
+			$_SESSION["user"] = $response->user;
 			foreach($curlResponse->response_headers as $key => $value){
 				$header = explode(": ", $value);
 				if($header[0] == "Authorization"){

@@ -7,7 +7,7 @@ $app->get('/series', "Controller:series");
 $app->post('/series', "Controller:newSerie");
 $app->get('/series/{id}', "Controller:serie");
 $app->put('/series/{id}', "Controller:updateSerie");
-$app->get('/series/{serie}/photos/add/{user}', "Controller:photosAdd");
+$app->get('/series/{serie}/photos/add', "Controller:photosAdd");
 $app->post('/series/{serie}/add/{photo}', "Controller:addPhotoSerie");
 $app->delete('/series/{serie}/remove/{photo}', "Controller:removePhotoSerie");
 $app->post('/register', "Controller:register");

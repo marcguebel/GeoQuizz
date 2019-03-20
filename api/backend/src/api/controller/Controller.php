@@ -228,7 +228,7 @@ class Controller{
 			return $this->container->created;
 		}
 		catch(\Exception $e){
-			return $this->container->forbidden;
+			return $this->container->badRequest;
 		}
 	}
 
@@ -244,7 +244,7 @@ class Controller{
 		$user = User::where("login", "=", $body->login)->first();
 		if($user != null && password_verify($body->password, $user->password)){
 			unset($user->password);			
-			$data = ["user" => $user];
+			$data = ["user" => $user->login];
 			$tokenJWT = TokenJWT::new($user->id);
 			$response = $this->container->ok;
 			$response = $response->withHeader("Authorization", "Bearer ".$tokenJWT);

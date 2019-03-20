@@ -6,6 +6,7 @@ use Respect\Validation\Validator as v;
 class SerieController extends Controller{
 	public function getSeries($request, $response){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curl->setHeader("Authorization", "Bearer ".$_SESSION["token"]);
 		$curlResponse = $curl->get($this->baseUrl."/series");
 		$series = json_decode($curlResponse->response)->series;
@@ -14,6 +15,7 @@ class SerieController extends Controller{
 
 	public function getSerie($request, $response, $args){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curlResponse = $curl->get($this->baseUrl."/series/".$args["id"]);
 		$curlBody = json_decode($curlResponse->response);
 		return $this->view->render($response, "series/serie.twig", ["serie" => $curlBody->serie, "photos" => $curlBody->photos]);
@@ -25,6 +27,7 @@ class SerieController extends Controller{
 
 	public function newSerie($request, $response){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curl->setHeader("Authorization", "Bearer ".$_SESSION["token"]);
 		$post = $request->getParams();
 		$body = [
@@ -42,18 +45,21 @@ class SerieController extends Controller{
 
 	public function removePhotoSerie($request, $response, $args){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curl->delete($this->baseUrl."/series/".$args["serie"]."/remove/".$args["photo"]);
 		return $response->withRedirect($this->router->pathFor("serie.details", ["id" => $args["serie"]]));
 	}
 
 	public function addPhotoSerie($request, $response, $args){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curl->post($this->baseUrl."/series/".$args["serie"]."/add/".$args["photo"]);
 		return $response->withRedirect($this->router->pathFor("serie.details", ["id" => $args["serie"]]));
 	}
 
 	public function getSerieEdit($request, $response, $args){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$curlResponse = $curl->get($this->baseUrl."/series/".$args["id"]);
 		$serie = json_decode($curlResponse->response)->serie;
 		return $this->view->render($response, "series/editSerie.twig", ["serie" => $serie, "points" => $serie->points]);
@@ -61,6 +67,7 @@ class SerieController extends Controller{
 
 	public function updateSerie($request, $response, $args){
 		$curl = new \Curl\Curl();
+		$curl->setOpt(CURLOPT_NOPROXY, "api.backend.local");
 		$post = $request->getParams();
 		$body = [
 			"ville" => $post["ville"],

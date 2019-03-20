@@ -59,9 +59,7 @@ CREATE TABLE `serie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `serie` (`id`, `ville`, `libelle`, `distance`, `points`, `latitude`, `longitude`, `zoom`, `idUser`) VALUES
-(1,	'Nancy',	'Quizz de la ville de Nancy - Facile',	200,	'1;3;5',	48.6925,	6.18324,	12,	'5c4e22d5-0b43-43c6-ab04-49b47fd2a265'),
-(2,	'Nancy',	'Quizz de la ville de Nancy - Normal',	150,	'1;3;5',	48.6925,	6.18324,	12,	'5c4e22d5-0b43-43c6-ab04-49b47fd2a265'),
-(3,	'Nancy',	'Quizz de la ville de Nancy - Difficile',	100,	'1;3;5',	48.6925,	6.18324,	12,	'5c4e22d5-0b43-43c6-ab04-49b47fd2a265');
+(1,	'Nancy',	'Quizz de la ville de Nancy - Facile',	200,	'1;3;5',	48.6925,	6.18324,	12,	'5c4e22d5-0b43-43c6-ab04-49b47fd2a265');
 
 DROP TABLE IF EXISTS `serie_photo`;
 CREATE TABLE `serie_photo` (
