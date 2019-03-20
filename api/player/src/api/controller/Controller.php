@@ -47,7 +47,7 @@ class Controller{
 			return $response;
 		}
 		catch(\Exception $e){
-			return $this->container->notFound;	
+			return $this->container->badRequest;	
 		}
 	}
 

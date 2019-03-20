@@ -57,6 +57,22 @@ class Controller{
 		}
 	}
 
+	public function photo(Request $request, Response $response, array $args){
+		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
+			$data["photo"] = Photo::findOrFail($args["id"]);
+			$response = $this->container->ok;
+			$response->getBody()->write(json_encode($data));
+			return $response;
+		}
+		catch(\Exception $e){
+			return $this->container->notFound;	
+		}
+	}
+
 	public function photosAdd(Request $request, Response $response, array $args){
 		try{
 			$tokenJWT = TokenJWT::check($request);
@@ -72,33 +88,6 @@ class Controller{
 			$response = $this->container->ok;
 			$response->getBody()->write(json_encode($data));
 			return $response;
-		}
-		catch(\Exception $e){
-			return $this->container->notFound;
-		}
-	}
-
-	public function photo(Request $request, Response $response, array $args){
-		try{
-			$data["photo"] = Photo::findOrFail($args["id"]);
-			$response = $this->container->ok;
-			$response->getBody()->write(json_encode($data));
-			return $response;
-		}
-		catch(\Exception $e){
-			return $this->container->notFound;	
-		}
-	}
-
-	public function updatePhoto(Request $request, Response $response, array $args){
-		try{
-			$body = json_decode($request->getBody());
-			$photo = Photo::findOrFail($args["id"]);
-			$photo->longitude = $body->longitude;
-			$photo->latitude = $body->latitude;
-			$photo->url = $body->url;
-			$photo->save();
-			return $this->container->noContent;
 		}
 		catch(\Exception $e){
 			return $this->container->notFound;
@@ -173,6 +162,10 @@ class Controller{
 
 	public function updateSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$body = json_decode($request->getBody());
 			$serie = Serie::findOrFail($args["id"]);
 			$serie->ville = $body->ville;
@@ -192,6 +185,10 @@ class Controller{
 
 	public function addPhotoSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$test_doublon = Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first();
 			if($test_doublon == null){
 				$serie_photo = new Serie_photo();
@@ -209,6 +206,10 @@ class Controller{
 
 	public function removePhotoSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first()->delete();
 			return $this->container->noContent;
 		}
@@ -231,14 +232,7 @@ class Controller{
 			return $this->container->badRequest;
 		}
 	}
-
-	public function checkLogin(Request $request, Response $response, array $args){
-		$data["count"] = User::where("login", "=", $args["login"])->count();
-		$response = $this->container->ok;
-		$response->getBody()->write(json_encode($data));
-		return $response;
-	}
-
+	
 	public function login(Request $request, Response $response, array $args){
 		$body = json_decode($request->getBody());
 		$user = User::where("login", "=", $body->login)->first();

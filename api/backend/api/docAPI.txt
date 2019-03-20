@@ -1,9 +1,28 @@
 ﻿Documentation API Backend
 
 ========================
+POST: /photos
+
+Description: Enregistre la photo
+
+Body:
+{
+	"latitude": ...,
+	"longitude": ...,
+	"url": ...
+}
+
+Header Authorization avec token JWT nécessaire
+
+ok 201, erreur 400
+
+Rien n'est renvoyer
+========================
 GET: /photos
 
-Description: Récupère toutes les photos
+Description: Récupère toutes les photos de l'utilisateur
+
+Header Authorization avec token JWT nécessaire
 
 ok 200, erreur 404
 
@@ -29,6 +48,8 @@ Description: Récupère la photo
 
 id: id de la photo
 
+Header Authorization avec token JWT nécessaire
+
 ok 200, erreur 404
 
 Retourne:
@@ -41,42 +62,11 @@ Retourne:
 	}
 }
 ========================
-POST: /photos
-
-Description: Enregistre la photo
-
-Body:
-{
-	"latitude": ...,
-	"longitude": ...,
-	"url": ...,
-	"idUser": ...
-}
-
-ok 201, erreur 403
-
-Rien n'est renvoyer
-========================
-PUT: /photos/{id}
-
-Description: Enregistre les nouvelles infos
-
-id: id de la photo
-
-Body: 
-{
-	"latitude": ...,
-	"longitude": ...,
-	"url": ...
-}
-
-ok 204, erreur 404
-
-Rien n'est renvoyer
-========================
 GET: /series
 
-Description: Récupère toutes les séries
+Description: Récupère toutes les séries de l'utilisateur
+
+Header Authorization avec token JWT nécessaire
 
 ok 200, erreur 404
 
@@ -88,9 +78,9 @@ Retourne:
 		"libelle": ...,
 		"distance": ...,
 		"points": [
-			"D": ...,
-			"2D" ...,
-			"3D": ...
+			"pts1": ...,
+			"pts2" ...,
+			"pts3": ...
 		],
 		"latitude": ...,
 		"longitude": ...,
@@ -102,9 +92,9 @@ Retourne:
 		"libelle": ...,
 		"distance": ...,
 		"points": [
-			"D": ...,
-			"2D" ...,
-			"3D": ...
+			"pts1": ...,
+			"pts2" ...,
+			"pts3": ...
 		],
 		"latitude": ...,
 		"longitude": ...,
@@ -114,7 +104,7 @@ Retourne:
 ========================
 GET: /series/{id}
 
-Description: Récupère la série
+Description: Récupère la série et les photos de celle-ci
 
 id: id de la série
 
@@ -128,9 +118,9 @@ Retourne:
 		"libelle": ...,
 		"distance": ...,
 		"points": [
-			"D": ...,
-			"2D" ...,
-			"3D": ...
+			"pts1": ...,
+			"pts2" ...,
+			"pts3": ...
 		],
 		"latitude": ...,
 		"longitude": ...,
@@ -150,6 +140,33 @@ Retourne:
 	}]
 }
 ========================
+POST: /series
+
+Description: Enregistre la série
+
+{
+  	"serie": {
+		"ville": ...,
+		"libelle": ...,
+		"distance": ...,
+		"points": ...,
+		"latitude": ...,
+		"longitude": ...,
+		"zoom": ...
+	}
+}
+
+Header Authorization avec token JWT nécessaire
+
+ok 201, erreur 404
+
+Retourne:
+{
+  	"serie": ...
+}
+
+serie: id de la série créée
+========================
 PUT: /series/{id}
 
 Description: Enregistre les nouvelles infos
@@ -161,30 +178,39 @@ Body:
 	"ville": ...,
 	"libelle": ...,
 	"distance": ...,
-	"points": ...
+	"points": ...,
+	"latitude": ...,
+	"longitude": ...,
+	"zoom": ...
 }
 
-ok 200, erreur 404
+Header Authorization avec token JWT nécessaire
+
+ok 204, erreur 404
 
 Rien n'est renvoyé
 ========================
-POST: /series/{serie}/add/{photo}[/]
+POST: /series/{serie}/add/{photo}
 
 Description: Ajoute une photo à la série
 
 serie: id de la série
 photo: id de la photo
 
+Header Authorization avec token JWT nécessaire
+
 ok 204, erreur 404
 
 Rien n'est renvoyé
 ========================
-DELETE: /series/{serie}/remove/{photo}[/]
+DELETE: /series/{serie}/remove/{photo}
 
 Description: Retire une photo à la série
 
 serie: id de la série
 photo: id de la photo
+
+Header Authorization avec token JWT nécessaire
 
 ok 204, erreur 404
 
@@ -200,7 +226,7 @@ Body:
 	"password": ...
 }
 
-ok 201, erreur 403
+ok 201, erreur 400
 
 Rien n'est renvoyé
 ========================
@@ -218,9 +244,7 @@ ok 200, erreur 401
 
 Retourne:
 {
-	"type": ...,
-	"user": {
-		"id": ...
-		"login": ...
-	}
+	"user": ...
 }
+
+user correspont au login de l'utilisateur

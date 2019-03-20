@@ -11,8 +11,10 @@ Body:
 	"joueur": ...
 }
 
-	serie: id de la série qui sera utilisée lors de la partie
-	joueur: nom du joueur, qui apparaîtra dans le tableau des scores
+serie: id de la série qui sera utilisée lors de la partie
+joueur: nom du joueur, qui apparaîtra dans le tableau des scores
+
+ok 201, erreur 400
 
 Retourne: 
 {
@@ -63,6 +65,8 @@ Body:
 	"score": ...	
 }
 
+ok 204, erreur 404
+
 Rien n'est renvoyé
 ========================
 PUT: /game/status/{id}
@@ -76,6 +80,8 @@ Body:
 	"status": ...	
 }
 
+ok 204, erreur 404
+
 Rien n'est renvoyé
 ========================
 GET: /game/leaderboard/{serie}
@@ -83,6 +89,8 @@ GET: /game/leaderboard/{serie}
 Description: Récupére les scores en fonction de la série
 
 serie: id de la série
+
+ok 200, erreur 404
 
 Retourne:
 {
@@ -98,6 +106,8 @@ Retourne:
 GET: /series
 
 Description: Récupère toutes les séries
+
+ok 204, erreur 404
 
 Retourne:
 {
