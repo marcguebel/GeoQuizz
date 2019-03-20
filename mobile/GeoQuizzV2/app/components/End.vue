@@ -4,7 +4,7 @@
 			<ActionItem @tap="changeRoute('Login')" ios.systemIcon="9" ios.position="left" android.systemIcon="ic_lock_power_off" android.position="actionBar"></ActionItem>
 		</ActionBar>
 		<FlexboxLayout flexDirection="column" >
-			<label id="lbE" textWrap="true">Bonne nouvelle : Votre Image à bien était mise en ligne ! </label>
+			<label id="lbE" textWrap="true">Bonne nouvelle : Votre image a bien été mise en ligne ! </label>
 			<StackLayout orientation="horizontal" @tap="changeRoute('Picture')" id="btnA" class="btn">
 				<Label width="80%">RETOUR A L'ACCUEIL</Label>
 				<Image src="~/assets/images/home.png" height="80%" />
