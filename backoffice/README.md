@@ -21,6 +21,13 @@ Dans la machine geoquizz_back_office, exécuter:
 composer install
 composer dump-autoload -o
 ```
+Dans le fichier /etc/hosts de votre machine hôte ajouter:
+```
+127.0.0.1 backoffice.local
+```
+Le backoffice est accessible avec l'url backoffice.local (port 12080 par défaut)
+
+La base de donnée est accessible avec l'url localhost (port 8080 par défaut)
 
 ## Développer avec
 
