@@ -1,6 +1,6 @@
 # Atelier 2 : GeoQuizz
 
-## LP CIASIE IUT Nancy-Charlemagnes
+## LP CIASIE IUT Nancy-Charlemagne
 Groupe :
  - Maillard Louis
  - Toussaint Yvann
