@@ -9,7 +9,7 @@ Avoir docker, docker-compose, API Backend installée
 ### Installation
 
 Après avoir récupéré le dépot Git, se placer à la racine, ouvrir un terminal et exécuter la commande: 
-``
+```
 docker-composer up -d
 ```
 Afficher les machines docker avec:
