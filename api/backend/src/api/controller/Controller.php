@@ -17,10 +17,13 @@ class Controller{
 		$this->container = $container;
 	}
 
+	//retourne le docAPI.txt avec des informations sur les routes
 	public function doc(Request $request, Response $response, array $args){
 		return $response->getBody()->write(file_get_contents("docAPI.txt"));		
 	}
 
+	//création d'une photo, header authorization nécessaire
+	//200, 400 ou 401
 	public function newPhoto(Request $request, Response $response, array $args){
 		try{
 			$tokenJWT = TokenJWT::check($request);
@@ -41,6 +44,8 @@ class Controller{
 		}
 	}
 
+	//retourne toutes les photos de l'utilisateur, header authorization nécessaire
+	//200, 401 ou 404
 	public function photos(Request $request, Response $response, array $args){
 		try{
 			$tokenJWT = TokenJWT::check($request);
@@ -57,6 +62,9 @@ class Controller{
 		}
 	}
 
+	//retourne toutes les photos de l'utilisateur pouvant être ajoutées à une série, 
+	//header authorization nécessaire
+	//200, 401 ou 404
 	public function photosAdd(Request $request, Response $response, array $args){
 		try{
 			$tokenJWT = TokenJWT::check($request);
@@ -78,33 +86,8 @@ class Controller{
 		}
 	}
 
-	public function photo(Request $request, Response $response, array $args){
-		try{
-			$data["photo"] = Photo::findOrFail($args["id"]);
-			$response = $this->container->ok;
-			$response->getBody()->write(json_encode($data));
-			return $response;
-		}
-		catch(\Exception $e){
-			return $this->container->notFound;	
-		}
-	}
-
-	public function updatePhoto(Request $request, Response $response, array $args){
-		try{
-			$body = json_decode($request->getBody());
-			$photo = Photo::findOrFail($args["id"]);
-			$photo->longitude = $body->longitude;
-			$photo->latitude = $body->latitude;
-			$photo->url = $body->url;
-			$photo->save();
-			return $this->container->noContent;
-		}
-		catch(\Exception $e){
-			return $this->container->notFound;
-		}
-	}
-
+	//retourne toutes les séries de l'utilisateur, header authorization nécessaire
+	//200, 401 ou 404
 	public function series(Request $request, Response $response, array $args){
 		try{
 			$tokenJWT = TokenJWT::check($request);
@@ -125,6 +108,8 @@ class Controller{
 		}
 	}
 
+	//retourne la série et les photos associées
+	//200 ou 404
 	public function serie(Request $request, Response $response, array $args){
 		try{
 			$data["serie"] = Serie::findOrFail($args["id"]);			
@@ -144,6 +129,8 @@ class Controller{
 		}
 	}
 
+	//création d'une série, header authorization nécessaire
+	//200, 400 ou 401
 	public function newSerie(Request $request, Response $response, array $args){
 		try{
 			$tokenJWT = TokenJWT::check($request);
@@ -171,8 +158,14 @@ class Controller{
 		}
 	}
 
+	//modification d'une photo, header authorization nécessaire
+	//204, 400 ou 401
 	public function updateSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$body = json_decode($request->getBody());
 			$serie = Serie::findOrFail($args["id"]);
 			$serie->ville = $body->ville;
@@ -190,8 +183,14 @@ class Controller{
 		}
 	}
 
+	//ajout d'une photo à une série, header authorization nécessaire
+	//204, 400 ou 401
 	public function addPhotoSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			$test_doublon = Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first();
 			if($test_doublon == null){
 				$serie_photo = new Serie_photo();
@@ -200,15 +199,21 @@ class Controller{
 				$serie_photo->save();
 				return $this->container->noContent;
 			}
-			return $this->container->forbidden;
+			return $this->container->badRequest;
 		}
 		catch(\Exception $e){
 			return $this->container->notFound;	
 		}
 	}
 
+	//retire une photo d'une série, header authorization nécessaire
+	//204, 400 ou 401
 	public function removePhotoSerie(Request $request, Response $response, array $args){
 		try{
+			$tokenJWT = TokenJWT::check($request);
+			if(!$tokenJWT){
+				return $this->container->noHeader;
+			}
 			Serie_photo::where("idSerie", "=", $args["serie"])->where("idPhoto", "=", $args["photo"])->first()->delete();
 			return $this->container->noContent;
 		}
@@ -217,6 +222,8 @@ class Controller{
 		}
 	}
 
+	//inscription utilisateur
+	//201 ou 400
 	public function register(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
@@ -232,13 +239,16 @@ class Controller{
 		}
 	}
 
+	//vérification si login dispo
 	public function checkLogin(Request $request, Response $response, array $args){
 		$data["count"] = User::where("login", "=", $args["login"])->count();
 		$response = $this->container->ok;
 		$response->getBody()->write(json_encode($data));
 		return $response;
 	}
-
+	
+	//authentification d'un utilisateur
+	//200 ou 401
 	public function login(Request $request, Response $response, array $args){
 		$body = json_decode($request->getBody());
 		$user = User::where("login", "=", $body->login)->first();

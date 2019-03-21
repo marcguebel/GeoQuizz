@@ -13,7 +13,8 @@ export default new Vuex.Store({
 		score: false,
 		pseudo: false,
 		token: false,
-		page: false,	
+		page: false,
+		pause: false,	
 	},
 	mutations: {
 		setLaSerie(state, laSerie){
@@ -42,6 +43,9 @@ export default new Vuex.Store({
 		},
 		setPage(state, page){
 			state.page = page;
+		},
+		setPause(state, pause){
+			state.pause = pause;
 		},
 		initialiseStore(state){
 			if(localStorage.getItem('store')){
