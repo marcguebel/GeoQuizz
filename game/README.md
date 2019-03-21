@@ -1,16 +1,16 @@
 # Application de jeu (player GeoQuizz)
 
-application web pour jouer
+Application web pour jouer
 
 ### Pré-requis
 
-avoir npm
+Avoir npm
 
 ### Installation
 
-ce rendre dans la partie player (où il y a le fichier "package.json")
+Se rendre dans la partie player (où il y a le fichier "package.json")
 
-ouvrir un terminal a cette endroit
+Ouvrir un terminal à cet endroit
 
 ```
 npm install
@@ -18,15 +18,15 @@ npm install
 
 ## Utilisation
 
-afin de pouvoir accéder au site lancer la commande suivante au même endroit que la précédente
+Afin de pouvoir accéder au site, lancer la commande suivante au même endroit que la précédente
 
 ```
 npm run dev
 ```
 
-puis rendez-vous a l'adresse suivante :
+Puis rendez-vous a l'adresse suivante :
 
-localhost:8080/#/
+localhost:8080/#/ (par défaut)
 
 ## Développer avec
 
