@@ -21,4 +21,7 @@ export default {
     color: white;
     font-size: 20px;
   }
+  .dark-blue{
+    color: darkblue;
+  }
 </style>

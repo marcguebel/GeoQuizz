@@ -6,8 +6,16 @@
           
         		</select>
         	</div>
-        	<div class="col-md-offset-4 col-md-4 bordure background" id='leaderboard'>
-        	
+        	<div class="col-md-offset-4 col-md-4 bordure background flex-row">
+        		<div class="col-md-offset-1 col-md-4 pt-4">
+        			<h2>Pseudo</h2>
+        		</div>
+        		<div class="col-md-offset-2 col-md-4 pt-4">
+        			<h2>Points</h2>
+        		</div>
+        		<div class="flex-row col-md-12"id='leaderboard'>
+        			
+        		</div>
         	</div>
         </div>
     </div>
@@ -53,22 +61,25 @@ export default {
 		      });
   		},
   		leaderboard(idSerie){
+  			let position = 1;
 	  		window.axios.get("https://player-lmaillard.pagekite.me/game/leaderboard/" + idSerie).then(response => {
 	  			document.getElementById('leaderboard').innerHTML = "";
 	           	response["data"]["score"].forEach(function(element){
 	           		let laDiv = document.createElement('div');
-	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
+	           		laDiv.setAttribute("class","col-md-offset-1 col-md-3 text-center");
+	           		
 	           		let resultatWrite = document.createElement('p');
-	           		resultatWrite.id = "white";
+	           		resultatWrite.id = "dark-blue";
 	           		let text = document.createTextNode(element.joueur);
 	           		resultatWrite.appendChild(text); 
 	           		laDiv.appendChild(resultatWrite); 
 	           		document.getElementById("leaderboard").appendChild(laDiv);
 
 	           		laDiv = document.createElement('div');
-	           		laDiv.setAttribute("class","col-md-offset-2 col-md-3 text-center");
+	           		laDiv.setAttribute("class","col-md-offset-4 col-md-2 text-center");
+					laDiv.setAttribute("class","col-md-offset-4 col-md-2 text-center");
 	           		resultatWrite = document.createElement('p');
-	           		resultatWrite.id = "white";
+	           		resultatWrite.id = "dark-blue";
 	           		text = document.createTextNode(element.score);
 	           		resultatWrite.appendChild(text); 
 	           		laDiv.appendChild(resultatWrite); 
@@ -81,7 +92,6 @@ export default {
 		           		document.getElementById("leaderboard").appendChild(laDiv);
 	           		}
 	           	});
-	           	$("#leader").html(HTML);
 	        }).catch(error => {
 	           console.log(error);
 	        });
@@ -92,14 +102,10 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 	.bordure{
-		border: 1.5px solid black;
+		border: 1.5px solid darkblue;
 		border-radius: 10px;
 		margin-top: 30px;
 		box-shadow: 2px 2px 2px gray;
 		margin-bottom: 30px;
-	}
-	.background{
-		background-color: darkblue;
-    	color:white;
 	}
 </style>
