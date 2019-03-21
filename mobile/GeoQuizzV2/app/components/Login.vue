@@ -41,7 +41,7 @@
 				})
 				.then(res => {
 					localStorage.setItem('userToken', res.headers.authorization)
-					localStorage.setItem('userLog', res.data.user.login)
+					localStorage.setItem('userLog', res.data.user)
 					this.changeRoute('Picture')
 				})
 				.catch((e)=>{

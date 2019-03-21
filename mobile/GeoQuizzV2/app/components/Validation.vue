@@ -69,7 +69,7 @@
 					})
 				})
 				.catch((e)=>{
-					console.log('error ' + e)
+					console.log('error ' + e.message)
 				})
 			},
 			changeRoute(to){this.$navigateTo(this.$routes[to], { clearHistory: true});},

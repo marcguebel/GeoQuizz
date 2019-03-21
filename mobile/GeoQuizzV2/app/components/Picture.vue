@@ -5,7 +5,7 @@
 		</ActionBar>
 		<StackLayout horizontalAlignment="center">
 			<StackLayout orientation="horizontal" @tap="takePicture" id="btnP" class="btn">
-				<Label width="80%">PRENDRE UNE PHOTO</Label>
+				<Label width="80%">PRENDRE UNE PHOTO </Label>
 				<Image src="~/assets/images/takePhoto.png" height="85%" />
 			</StackLayout>
 
@@ -113,7 +113,7 @@
 		},
 		mounted() {
 			localStorage.setItem('img', null)
-			localStorage.setItem('image64', null)
+			localStorage.setItem('img64', null)
 		}
 	}
 </script>
