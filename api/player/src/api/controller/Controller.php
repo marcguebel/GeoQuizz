@@ -14,10 +14,14 @@ class Controller{
 		$this->container = $container;
 	}
 
+	//retourne le docAPI.txt avec des informations sur les routes
 	public function doc(Request $request, Response $response, array $args){
 		return $response->getBody()->write(file_get_contents("docAPI.txt"));
 	}
 
+	//créer une partie avec le nom du joueur et la série choisis, retourne les information pour jouer:
+	//série, photos
+	//201 ou 400
 	public function newGame(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
@@ -51,10 +55,15 @@ class Controller{
 		}
 	}
 
+	//modifie le status de la partie
+	//204 ou 404
 	public function status(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
 			$partie = Partie::findOrFail($args["id"]);
+			if($body->status != "ingame" || $body->status != "leaderboard"){
+				return $this->container->badRequest;
+			}
 			$partie->status = Partie::$status[$body->status];			
 			$partie->save();
 			return $this->container->noContent;
@@ -64,6 +73,8 @@ class Controller{
 		}
 	}
 
+	//modifie le score de la partie
+	//204 ou 404
 	public function score(Request $request, Response $response, array $args){
 		try{
 			$body = json_decode($request->getBody());
@@ -78,6 +89,8 @@ class Controller{
 		}
 	}
 
+	//retourne les parties trier pour le leaderboard
+	//200 ou 404
 	public function leaderboard(Request $request, Response $response, array $args){
 		try{
 			$parties = Partie::select(["joueur", "score"])
@@ -96,6 +109,8 @@ class Controller{
 		}	
 	}
 
+	//retourne toutes les séries
+	//200 ou 404
 	public function series(Request $request, Response $response, array $args){
 		try{
 			$series = Serie::select(["id", "ville", "libelle", "distance"])->get();

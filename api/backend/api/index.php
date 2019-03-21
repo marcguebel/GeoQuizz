@@ -59,7 +59,6 @@ $c["Controller"] = function($c){
     return new \backend\api\controller\Controller($c);
 };
 
-
 //eloquent
 $db = new Illuminate\Database\Capsule\Manager();
 $db->addConnection(parse_ini_file("conf/conf.ini"));
