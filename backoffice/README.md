@@ -4,12 +4,12 @@ Sous répertoire avec le code du backoffice
 
 ### Pré-requis
 
-Avoir docker, docker-compose, installer les 2 API Player et Backend
+Avoir docker, docker-compose, API Backend installée
 
 ### Installation
 
-Après avoir récupérer le dépot Git, se placer à la racine, ouvrir un terminal et exécuter la commande: 
-```
+Après avoir récupéré le dépot Git, se placer à la racine, ouvrir un terminal et exécuter la commande: 
+``
 docker-composer up -d
 ```
 Afficher les machines docker avec:
