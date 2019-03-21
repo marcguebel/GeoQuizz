@@ -1,8 +1,6 @@
 <?php
 $app->get('/photos', "Controller:photos");
-$app->get('/photos/{id}', "Controller:photo");
 $app->post('/photos', "Controller:newPhoto");
-$app->put('/photos/{id}', "Controller:updatePhoto");
 $app->get('/series', "Controller:series");
 $app->post('/series', "Controller:newSerie");
 $app->get('/series/{id}', "Controller:serie");

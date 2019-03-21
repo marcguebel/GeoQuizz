@@ -2,6 +2,8 @@
 use Firebase\JWT\JWT;
 namespace backend\api\utils;
 class TokenJWT{
+
+	//création token JWT, valide 1h
 	public static function new($data){
 		$token = \Firebase\JWT\JWT::encode([
 			'iss' => 'http://backend-lmaillard.pagekite.me/',
@@ -13,6 +15,7 @@ class TokenJWT{
 		return $token; 
 	} 
 
+	//décode le token JWT
 	public static function decode($jwt){
 		try{ 
 			return \Firebase\JWT\JWT::decode($jwt, getenv("secretJWT"), array('HS256')); 
@@ -22,6 +25,7 @@ class TokenJWT{
 		}
 	}
 
+	//vérification présence du token et le renvoi décodé
 	public static function check($request){
 		try{ 
 			$authorization = $request->getHeader("Authorization");
